@@ -11,5 +11,5 @@ public class AdminBadges {
     private String badgeName;
     private String genre;
     private String badgeImage;
-    private Integer needPoint;
+    private Long needPoint;
 }

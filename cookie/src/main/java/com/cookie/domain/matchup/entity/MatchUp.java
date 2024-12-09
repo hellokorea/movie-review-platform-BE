@@ -1,6 +1,5 @@
 package com.cookie.domain.matchup.entity;
 
-import com.cookie.domain.chat.entity.Chatroom;
 import com.cookie.domain.matchup.entity.enums.MatchUpStatus;
 import com.cookie.domain.matchup.entity.enums.MatchUpType;
 import com.cookie.global.entity.BaseTimeEntity;
@@ -34,12 +33,9 @@ public class MatchUp extends BaseTimeEntity {
 
     @Enumerated(EnumType.STRING)
     private MatchUpStatus status;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "chatroom_id")
-    private Chatroom chatroom;
 
     @Builder
-    public MatchUp(String title, MatchUpType type, LocalDateTime startAt, LocalDateTime endAt, MatchUpMovie movie1, MatchUpMovie movie2, MatchUpStatus status, Chatroom chatroom) {
+    public MatchUp(String title, MatchUpType type, LocalDateTime startAt, LocalDateTime endAt, MatchUpMovie movie1, MatchUpMovie movie2, MatchUpStatus status) {
         this.title = title;
         this.type = type;
         this.startAt = startAt;
@@ -47,7 +43,6 @@ public class MatchUp extends BaseTimeEntity {
         this.movie1 = movie1;
         this.movie2 = movie2;
         this.status = status;
-        this.chatroom = chatroom;
     }
 
     public void changeStatus(MatchUpStatus newStatus) {

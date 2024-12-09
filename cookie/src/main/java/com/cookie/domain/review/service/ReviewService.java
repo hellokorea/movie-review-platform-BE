@@ -22,6 +22,7 @@ import com.cookie.domain.review.entity.ReviewLike;
 import com.cookie.domain.review.repository.ReviewCommentRepository;
 import com.cookie.domain.review.repository.ReviewLikeRepository;
 import com.cookie.domain.review.repository.ReviewRepository;
+import com.cookie.domain.reward.service.RewardPointService;
 import com.cookie.domain.user.dto.response.CommentUserResponse;
 import com.cookie.domain.user.dto.response.ReviewUserResponse;
 import com.cookie.domain.user.entity.DailyGenreScore;
@@ -58,6 +59,7 @@ public class ReviewService {
     private final DailyGenreScoreRepository dailyGenreScoreRepository;
     private final DailyGenreScoreService dailyGenreScoreService;
     private final NotificationService notificationService;
+    private final RewardPointService rewardPointService;
 
     @Transactional
     public void createReview(Long userId, CreateReviewRequest createReviewRequest, CopyOnWriteArrayList<SseEmitter> reviewEmitters, CopyOnWriteArrayList<SseEmitter> pushNotificationEmitters) {
@@ -131,6 +133,7 @@ public class ReviewService {
 
         stepTime = System.currentTimeMillis();
 //        sendReviewCreatedEvent(savedReview, reviewEmitters);
+        rewardPointService.updateBadgePointFromReview(user, 1L);
         log.info("Sent review created event, Time Taken: {} ms", System.currentTimeMillis() - stepTime);
 
         log.info("End createReview, Total Time Taken: {} ms", System.currentTimeMillis() - startTime);
