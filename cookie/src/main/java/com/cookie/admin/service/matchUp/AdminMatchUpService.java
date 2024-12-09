@@ -90,7 +90,6 @@ public class AdminMatchUpService {
                 .movie2(matchUpMovies.get(1))
                 .startAt(request.getStartTime())
                 .endAt(request.getEndTime())
-                .chatroom(null) // 수정 필요
                 .build();
 
         matchUpRepository.save(matchUp);

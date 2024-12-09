@@ -62,8 +62,8 @@ public class AdminMovieCreateService {
     public AdminMovieBaseAddResponse defaultMoviesAdd() {
         long movieAddCount = 0;
 
-        for (int year = 2024; year >= 2019; year--) {
-            for (int page = 1; page <= 2; page++) {
+        for (int year = 2024; year >= 1990; year--) {
+            for (int page = 1; page <= 5; page++) {
                 String urlDiscover = createDiscoverUrl(year, page);
                 System.out.println("urlDiscover = " + urlDiscover);
 
@@ -99,7 +99,7 @@ public class AdminMovieCreateService {
                                 return null;
                             }
                         })
-                        .filter(Objects::nonNull) // null 제거
+                        .filter(Objects::nonNull)
                         .collect(Collectors.toList());
 
                 if (!movies.isEmpty()) {
