@@ -112,7 +112,7 @@ public class TMDBService {
                 .posterPath(imageUrl + detail.getPosterPath())
                 .releaseDate(detail.getReleaseDate())
                 .certification(certification.isEmpty() ? "N/A" : certification)
-                .country(detail.getOriginCountry().get(0))
+                .country(detail.getOriginCountry().get(0).isEmpty() ? "N/A" : detail.getOriginCountry().get(0))
                 .plot(detail.getOverview().isEmpty() ? "N/A" : detail.getOverview())
                 .youtube(video.orElse("N/A"))
                 .stillCuts(images)
