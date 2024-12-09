@@ -62,7 +62,7 @@ public class AdminMovieCreateService {
     public AdminMovieBaseAddResponse defaultMoviesAdd() {
         long movieAddCount = 0;
 
-        for (int year = 2024; year >= 2024; year--) {
+        for (int year = 2015; year >= 1990; year--) {
             for (int page = 1; page <= 5; page++) {
                 String urlDiscover = createDiscoverUrl(year, page);
                 System.out.println("urlDiscover = " + urlDiscover);
