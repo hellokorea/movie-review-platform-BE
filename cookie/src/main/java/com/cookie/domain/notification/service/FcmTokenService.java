@@ -14,20 +14,41 @@ import org.springframework.stereotype.Service;
 public class FcmTokenService {
     private final UserRepository userRepository;
     private final FcmTokenRepository fcmTokenRepository;
+    private final NotificationService notificationService;
 
-    public void saveToken(Long userId, String token) {
+    public void saveFcmToken(Long userId, String token) {
         log.info("saveToken userId: {} and token: {}", userId, token);
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("not found userId: " + userId));
 
-        FcmToken fcmToken = FcmToken.builder()
-                .token(token)
-                .user(user)
-                .build();
+        // 사용자가 알림을 활성화한 경우에만 토큰 저장
+        if (user.isPushEnabled()) {
+            FcmToken fcmToken = FcmToken.builder()
+                    .token(token)
+                    .user(user)
+                    .build();
 
-        fcmTokenRepository.save(fcmToken);
+            fcmTokenRepository.save(fcmToken);
+            log.info("Saved fcm token");
+            // notificationService.subscribeToTopic(fcmToken.getToken(), user.getCategory().getId(), userId); // 구독 취소
+        } else {
+            log.info("Push notifications are disabled for userId: {}", userId);
+        }
+    }
 
+    public void deleteFcmToken(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("not found userId: " + userId));
+
+        FcmToken fcmToken = fcmTokenRepository.findByUserId(userId)
+                .orElseThrow(() -> new IllegalArgumentException("not found fcmToken"));
+
+        fcmTokenRepository.delete(fcmToken);
+        log.info("Deleted fcm token");
+
+//        notificationService.unsubscribeFromTopic(fcmToken.getToken(), user.getCategory().getId(), userId); // 구독 취소
+//        log.info("Unsubscribe Topic");
     }
 
 }
