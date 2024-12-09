@@ -69,7 +69,7 @@ jobs:
           pkill -f 'java -jar' || true
           nohup java -jar /home/ubuntu/Cookie-BE/cookie/build/libs/cookie-0.0.1-SNAPSHOT.jar \
             --spring.config.location=file:/home/ubuntu/Cookie-BE/cookie/src/main/resources/application.properties \
-            --firebase.config.path=/home/ubuntu/Cookie-BE/cookie/src/main/resources/firebase/cookie-notice.json \
+            --firebase.path=/home/ubuntu/Cookie-BE/cookie/src/main/resources/firebase/cookie-notice.json \
             > /home/ubuntu/Cookie-BE/cookie/build/libs/app.log 2>&1 &
           EOF
 
