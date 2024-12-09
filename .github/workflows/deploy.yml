@@ -69,8 +69,9 @@ jobs:
           pkill -f 'java -jar' || true
           nohup java -jar /home/ubuntu/Cookie-BE/cookie/build/libs/cookie-0.0.1-SNAPSHOT.jar \
             --spring.config.location=file:/home/ubuntu/Cookie-BE/cookie/src/main/resources/application.properties \
-            --firebase.path=/home/ubuntu/Cookie-BE/cookie/src/main/resources/firebase/cookie-notice.json \
+            --firebase.path=file:/home/ubuntu/Cookie-BE/cookie/src/main/resources/firebase/cookie-notice.json \
             > /home/ubuntu/Cookie-BE/cookie/build/libs/app.log 2>&1 &
+
           EOF
 
           # 비공개 키 파일 삭제
