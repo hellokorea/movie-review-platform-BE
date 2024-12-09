@@ -67,10 +67,10 @@ jobs:
           echo "Deploying application on EC2..."
           ssh -i private_key.pem -o StrictHostKeyChecking=no $EC2_USERNAME@$EC2_HOST << EOF
           pkill -f 'java -jar' || true
-          nohup java -jar $BUILD_DIR/$DEPLOY_JAR \
+          nohup java -jar /home/ubuntu/Cookie-BE/cookie/build/libs/cookie-0.0.1-SNAPSHOT.jar \
             --spring.config.location=file:/home/ubuntu/Cookie-BE/cookie/src/main/resources/application.properties \
             --firebase.config.path=/home/ubuntu/Cookie-BE/cookie/src/main/resources/firebase/cookie-notice.json \
-            > $BUILD_DIR/app.log 2>&1 &
+            > /home/ubuntu/Cookie-BE/cookie/build/libs/app.log 2>&1 &
           EOF
 
           # 비공개 키 파일 삭제
