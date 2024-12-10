@@ -8,13 +8,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class FcmTokenService {
     private final UserRepository userRepository;
     private final FcmTokenRepository fcmTokenRepository;
-    private final NotificationService notificationService;
 
     public void saveFcmToken(Long userId, String token) {
         log.info("saveToken userId: {} and token: {}", userId, token);
@@ -24,6 +25,14 @@ public class FcmTokenService {
 
         // 사용자가 알림을 활성화한 경우에만 토큰 저장
         if (user.isPushEnabled()) {
+
+            // 동일한 토큰이 이미 존재하면 저장하지 않고 종료
+            if (fcmTokenRepository.existsByTokenAndUser(token, user)) {
+                log.info("이미 동일한 토큰 {}이 {}에 존재하여 저장하지 않습니다.", token, userId);
+                return;
+            }
+
+            // 동일한 토큰이 존재하지 않으면 토큰 저장
             FcmToken fcmToken = FcmToken.builder()
                     .token(token)
                     .user(user)
@@ -31,6 +40,7 @@ public class FcmTokenService {
 
             fcmTokenRepository.save(fcmToken);
             log.info("Saved fcm token");
+
             // notificationService.subscribeToTopic(fcmToken.getToken(), user.getCategory().getId(), userId); // 구독 취소
         } else {
             log.info("Push notifications are disabled for userId: {}", userId);
@@ -41,14 +51,17 @@ public class FcmTokenService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("not found userId: " + userId));
 
-        FcmToken fcmToken = fcmTokenRepository.findByUserId(userId)
-                .orElseThrow(() -> new IllegalArgumentException("not found fcmToken"));
+        Optional<FcmToken> optionalFcmToken = fcmTokenRepository.findByUserId(userId);
 
-        fcmTokenRepository.delete(fcmToken);
-        log.info("Deleted fcm token");
+        if (optionalFcmToken.isPresent()) {
+            FcmToken fcmToken = optionalFcmToken.get();
+            fcmTokenRepository.delete(fcmToken);
+            log.info("Deleted fcm token for userId: {}", userId);
 
 //        notificationService.unsubscribeFromTopic(fcmToken.getToken(), user.getCategory().getId(), userId); // 구독 취소
 //        log.info("Unsubscribe Topic");
+        } else {
+            log.info("userId:{} 에 삭제 할 FCM 토큰이 존재하지 않습니다.", userId);
+        }
     }
-
 }
