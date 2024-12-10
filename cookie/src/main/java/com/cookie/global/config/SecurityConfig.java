@@ -106,6 +106,7 @@ public class SecurityConfig {
                                 "api/actor/{actorId}",
                                 "api/director/{directorId}",
                                 "/api/matchups/{matchUpId}",
+                                "/api/matchup-chat/{matchUpId}/messages",
 
                                 "/swagger-ui.html",
                                 "/v3/api-docs"
