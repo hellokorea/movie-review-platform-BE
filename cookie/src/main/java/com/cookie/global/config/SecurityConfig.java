@@ -103,6 +103,8 @@ public class SecurityConfig {
                                 "/api/movies/categoryMovies",
                                 "/api/movies/mainMatchUps",
                                 "/api/movies/mainAdminRecommend",
+                                "api/actor/{actorId}",
+                                "api/director/{directorId}",
 
                                 "/swagger-ui.html",
                                 "/v3/api-docs"
