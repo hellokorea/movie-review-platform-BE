@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -90,11 +91,9 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/**",
                                 "/api/auth/**",
                                 "/login/oauth2/code/**",
                                 "/oauth2/authorization/**",
-                                "/api/reviews",
                                 "/api/reviews/spoiler",
                                 "/api/reviews/{reviewId}",
                                 "/api/movies/{movieId}/reviews",
@@ -104,6 +103,8 @@ public class SecurityConfig {
                                 "/swagger-ui.html",
                                 "/v3/api-docs"
                         ).permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/reviews").permitAll() // GET만 허용
+                        .requestMatchers("/api/reviews").authenticated() // 다른 메서드는 인증 필요
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
         );
