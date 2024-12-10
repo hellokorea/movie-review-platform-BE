@@ -105,6 +105,7 @@ public class SecurityConfig {
                                 "/api/movies/mainAdminRecommend",
                                 "api/actor/{actorId}",
                                 "api/director/{directorId}",
+                                "/api/matchups/{matchUpId}",
 
                                 "/swagger-ui.html",
                                 "/v3/api-docs"
