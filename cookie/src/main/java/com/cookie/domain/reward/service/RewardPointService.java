@@ -27,9 +27,9 @@ public class RewardPointService {
     private final BadgeRepository badgeRepository;
 
     @Transactional
-    public void updateBadgePointFromReview(User user, Long actionId) {
+    public void updateBadgePointFromReview(User user, String actionName) {
 
-        Long actionPoint = rewardCacheService.getActionPointByCache(actionId);
+        Long actionPoint = rewardCacheService.getActionPointByCache(actionName);
 
         BadgeAccumulationPoint userPoint = badgeAccumulationPointRepository.findByUserId(user.getId());
         Long currentUserPoint = userPoint.getAccPoint();

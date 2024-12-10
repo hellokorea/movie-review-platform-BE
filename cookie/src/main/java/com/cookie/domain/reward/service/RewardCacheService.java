@@ -17,10 +17,10 @@ public class RewardCacheService {
     private final BadgeActionRepository badgeActionRepository;
     private final BadgeRepository badgeRepository;
 
-    @Cacheable(value = "pointLivedCache", key = "'action:' + #actionId", cacheManager = "pointLivedCacheManager")
-    public Long getActionPointByCache(Long actionId) {
-        log.info("최초 DB 에서 조회 -> actionId: {} from DB", actionId);
-        return badgeActionRepository.findById(actionId)
+    @Cacheable(value = "pointLivedCache", key = "'action:' + #actionName", cacheManager = "pointLivedCacheManager")
+    public Long getActionPointByCache(String actionName) {
+        log.info("최초 DB 에서 조회 -> actionId: {} from DB", actionName);
+        return badgeActionRepository.findBadgeActionByName(actionName)
                 .map(BadgeAction::getActionPoint)
                 .orElseThrow(() -> new IllegalArgumentException("해당 액션 id는 존재하지 않습니다."));
     }

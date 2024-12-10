@@ -133,7 +133,7 @@ public class ReviewService {
 
         stepTime = System.currentTimeMillis();
 //        sendReviewCreatedEvent(savedReview, reviewEmitters);
-        rewardPointService.updateBadgePointFromReview(user, 1L);
+        rewardPointService.updateBadgePointFromReview(user, "review");
         log.info("Sent review created event, Time Taken: {} ms", System.currentTimeMillis() - stepTime);
 
         log.info("End createReview, Total Time Taken: {} ms", System.currentTimeMillis() - startTime);
