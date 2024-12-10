@@ -310,10 +310,6 @@ public class ReviewService {
                 .orElseThrow(() -> new IllegalArgumentException("not found reviewId: " + reviewId));
         log.info("Retrieved review: reviewId = {}", reviewId);
 
-        if (review.getUser().getId().equals(userId)) {
-            throw new IllegalArgumentException("자신의 리뷰에는 댓글을 작성할 수 없습니다.");
-        }
-
         ReviewComment comment = ReviewComment.builder()
                 .user(user)
                 .review(review)
