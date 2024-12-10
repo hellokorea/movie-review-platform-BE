@@ -22,7 +22,7 @@ public class RewardCacheService {
         log.info("최초 DB 에서 조회 -> actionId: {} from DB", actionName);
         return badgeActionRepository.findBadgeActionByName(actionName)
                 .map(BadgeAction::getActionPoint)
-                .orElseThrow(() -> new IllegalArgumentException("해당 액션 id는 존재하지 않습니다."));
+                .orElseThrow(() -> new IllegalArgumentException("해당 action name 이 존재하지 않습니다."));
     }
 
     @Cacheable(value = "pointLivedCache", key = "'badge:' + #grade", cacheManager = "pointLivedCacheManager")
@@ -30,6 +30,6 @@ public class RewardCacheService {
         log.info("최초 DB 에서 조회 -> badge: {} from DB", grade);
         return badgeRepository.findBadgeByGrade(grade)
                 .map(Badge::getNeedPoint)
-                .orElseThrow(() -> new IllegalArgumentException("해당 액션 id는 존재하지 않습니다."));
+                .orElseThrow(() -> new IllegalArgumentException("해당 뱃지 등급이 존재하지 않습니다."));
     }
 }
