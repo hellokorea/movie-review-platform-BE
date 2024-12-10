@@ -99,6 +99,7 @@ public class SecurityConfig {
                                 "/api/movies/{movieId}/reviews",
                                 "/api/movies/{movieId}/reviews/spoiler",
                                 "/api/admin/movie/base",
+                                "/api/search/**",
 
                                 "/swagger-ui.html",
                                 "/v3/api-docs"
