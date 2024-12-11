@@ -1,14 +1,12 @@
 package com.cookie.domain.user.controller;
 
+import com.cookie.domain.badge.dto.MyBadgeResponse;
 import com.cookie.domain.movie.dto.response.MoviePagenationResponse;
 import com.cookie.domain.movie.service.MovieService;
 import com.cookie.domain.review.dto.response.ReviewPagenationResponse;
 import com.cookie.domain.review.dto.response.ReviewResponse;
 import com.cookie.domain.review.service.ReviewService;
-import com.cookie.domain.user.dto.response.BadgeAccResponse;
-import com.cookie.domain.user.dto.response.MyPageResponse;
-import com.cookie.domain.user.dto.response.MyProfileDataResponse;
-import com.cookie.domain.user.dto.response.UserResponse;
+import com.cookie.domain.user.dto.response.*;
 import com.cookie.domain.user.dto.response.auth.CustomOAuth2User;
 import com.cookie.domain.user.service.UserService;
 import com.cookie.global.util.ApiUtil;
@@ -25,6 +23,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 
 @Tag(name = "유저", description = "유저")
@@ -79,6 +79,18 @@ public class UserController {
         Long userId = customOAuth2User.getId();
         ReviewPagenationResponse response = reviewService.getLikedReviewsByUserId(userId, page, size);
         return ApiUtil.success(response);
+    }
+
+    @Operation(summary = "내 뱃지 포인트 히스토리 조회", responses = {
+            @ApiResponse(responseCode = "200", content = @Content(mediaType = "application/json",
+                    array = @ArraySchema(
+                            schema = @Schema(implementation = MyBadgeHistoryResponse.class))))
+    })
+    @GetMapping("/badgeHistory")
+    public ApiSuccess<?> getMyBadgePointHistory(@AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
+        Long userId = customOAuth2User.getId();
+        List<MyBadgeHistoryResponse> responses = userService.getMyBadgePointHistory(userId);
+        return ApiUtil.success(responses);
     }
 
     @Operation(summary = "내 정보", responses = {
