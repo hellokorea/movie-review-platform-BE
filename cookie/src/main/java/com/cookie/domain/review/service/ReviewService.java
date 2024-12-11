@@ -125,8 +125,8 @@ public class ReviewService {
 //            log.info("Extracted excluded tokens, Time Taken: {} ms", System.currentTimeMillis() - stepTime);
 
             stepTime = System.currentTimeMillis();
-            String title = String.format("%s님 새로운 리뷰가 등록되었습니다!", user.getId());
-            String body = String.format("%s님이 %s 영화에 리뷰를 남겼습니다.", user.getNickname(), movie.getTitle());
+            String title ="Cookie 🍪";
+            String body = String.format("%s님이 %s 영화에 리뷰를 등록했어요!.", user.getNickname(), movie.getTitle());
             notificationService.sendPushNotificationToUsers(userTokens, title, body);
             log.info("Sent push notification for genre '{}', Time Taken: {} ms", genre, System.currentTimeMillis() - stepTime);
         }
