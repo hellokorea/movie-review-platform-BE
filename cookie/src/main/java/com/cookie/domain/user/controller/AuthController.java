@@ -83,7 +83,7 @@ public class AuthController {
             return ResponseEntity.badRequest().body(ApiUtil.error(400, "DUPLICATED_NICKNAME"));
         }
 
-        String profileImageUrl = "";
+        String profileImageUrl = "https://uplus-bucket.s3.ap-northeast-2.amazonaws.com/6bc46d8d-b_default.jpeg";
         if (profileImage != null) {
             profileImageUrl = awss3Service.uploadImage(profileImage);
         }
