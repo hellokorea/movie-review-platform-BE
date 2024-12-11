@@ -62,7 +62,7 @@ public class AuthController {
             @RequestPart("socialId") String socialId,
             @RequestPart("email") String email,
             @RequestPart("nickname") String nickname,
-            @RequestPart("profileImage") MultipartFile profileImage,
+            @RequestPart(value = "profileImage", required = false) MultipartFile profileImage,
             @RequestPart("pushEnabled") String pushEnabled,
             @RequestPart("emailEnabled") String emailEnabled,
             @RequestPart("genreId") String genreId,
@@ -83,7 +83,10 @@ public class AuthController {
             return ResponseEntity.badRequest().body(ApiUtil.error(400, "DUPLICATED_NICKNAME"));
         }
 
-        String profileImageUrl = awss3Service.uploadImage(profileImage);
+        String profileImageUrl = "https://uplus-bucket.s3.ap-northeast-2.amazonaws.com/6bc46d8d-b_default.jpeg";
+        if (profileImage != null) {
+            profileImageUrl = awss3Service.uploadImage(profileImage);
+        }
 
         // 새로운 사용자 등록
         User newUser = User.builder()

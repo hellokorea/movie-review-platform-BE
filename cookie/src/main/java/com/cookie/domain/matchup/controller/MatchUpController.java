@@ -69,7 +69,7 @@ public class MatchUpController {
     @GetMapping("/{matchUpId}")
     public ApiSuccess<?> getOnGoingMatchUp(@AuthenticationPrincipal CustomOAuth2User customOAuth2User, @PathVariable(name = "matchUpId") Long matchUpId) {
         log.info("매치업 상세보기 시작");
-        Long userId = customOAuth2User.getId();
+        Long userId = (customOAuth2User != null) ? customOAuth2User.getId() : null;
         MatchUpResponse matchUp = matchUpService.getOnGoingMatchUp(matchUpId, userId);
         return ApiUtil.success(matchUp);
     }

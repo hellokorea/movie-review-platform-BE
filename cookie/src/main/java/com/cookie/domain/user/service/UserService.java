@@ -1,9 +1,9 @@
 package com.cookie.domain.user.service;
 
+import com.cookie.domain.category.repository.CategoryRepository;
 import com.cookie.domain.badge.dto.MyBadgeResponse;
 import com.cookie.domain.badge.repository.BadgeRepository;
 import com.cookie.domain.category.entity.Category;
-import com.cookie.domain.category.repository.CategoryRepository;
 import com.cookie.domain.movie.entity.Movie;
 import com.cookie.domain.movie.entity.MovieLike;
 import com.cookie.domain.movie.repository.MovieLikeRepository;
@@ -12,24 +12,19 @@ import com.cookie.domain.notification.repository.FcmTokenRepository;
 import com.cookie.domain.notification.service.NotificationService;
 import com.cookie.domain.review.dto.response.ReviewPagenationResponse;
 import com.cookie.domain.review.dto.response.ReviewResponse;
-import com.cookie.domain.review.entity.Review;
 import com.cookie.domain.review.entity.ReviewLike;
 import com.cookie.domain.review.repository.ReviewLikeRepository;
-import com.cookie.domain.review.repository.ReviewRepository;
 import com.cookie.domain.reward.entity.RewardHistory;
 import com.cookie.domain.reward.repository.RewardHistoryRepository;
 import com.cookie.domain.user.dto.response.*;
-import com.cookie.domain.user.entity.BadgeAccumulationPoint;
-import com.cookie.domain.user.entity.GenreScore;
-import com.cookie.domain.user.entity.User;
-import com.cookie.domain.user.entity.UserBadge;
+import com.cookie.domain.review.entity.Review;
+import com.cookie.domain.user.entity.*;
 import com.cookie.domain.user.entity.enums.ActionType;
 import com.cookie.domain.user.entity.enums.SocialProvider;
-import com.cookie.domain.user.repository.BadgeAccumulationPointRepository;
-import com.cookie.domain.user.repository.GenreScoreRepository;
-import com.cookie.domain.user.repository.UserBadgeRepository;
-import com.cookie.domain.user.repository.UserRepository;
+import com.cookie.domain.user.repository.*;
+import com.cookie.domain.review.repository.ReviewRepository;
 import com.cookie.global.service.AWSS3Service;
+import com.cookie.domain.notification.entity.FcmToken;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -85,6 +80,7 @@ public class UserService {
         List<ReviewResponse> reviewDtos = getReviewsByUserId(userId).stream()
                 .limit(4) // 최대 4개의 리뷰만 선택
                 .collect(Collectors.toList());
+
 
         // 5. MyPageResponse 생성 및 반환
         return MyPageResponse.builder()
@@ -247,14 +243,6 @@ public class UserService {
             }
         }
 
-        if (!user.getNickname().equals(nickname) && userRepository.existsByNickname(nickname)) {
-            throw new IllegalArgumentException(nickname + "은(는) 이미 존재하는 닉네임입니다.");
-        }
-
-        if (nickname == null || nickname.trim().isEmpty()) {
-            throw new IllegalArgumentException("닉네임을 입력해 주세요.");
-        }
-
         String profileImageUrl = user.getProfileImage();
         if (profileImage != null && !profileImage.isEmpty()) { // profile null 이 아닐 경우
             profileImageUrl = awss3Service.uploadImage(profileImage);
@@ -347,6 +335,10 @@ public class UserService {
 
     public boolean isDuplicateNicknameRegister(String nickname) {
         return userRepository.existsByNickname(nickname);
+    }
+
+    public boolean isDuplicateNicknameSetting(String nickname, String userNickname) {
+        return !userNickname.equals(nickname) && userRepository.existsByNickname(nickname);
     }
 
     @Transactional
@@ -450,6 +442,7 @@ public class UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("not found userId: " + userId));
         rewardHistoryRepository.deleteByUserId(userId);
+        awss3Service.deleteImage(user.getProfileImage());
         userRepository.deleteById(userId);
     }
 

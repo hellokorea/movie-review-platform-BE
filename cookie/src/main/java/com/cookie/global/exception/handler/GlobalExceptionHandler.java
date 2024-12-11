@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 @Slf4j
@@ -22,6 +23,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     protected ResponseEntity<Object> handleExceptionInternal(Exception ex, Object body, HttpHeaders headers,
                                                              HttpStatusCode statusCode, WebRequest request) {
         log.error(ex.getMessage(), ex);
+
+        if (ex instanceof MaxUploadSizeExceededException) {
+            ApiError<String> error = ApiUtil.error(HttpStatus.PAYLOAD_TOO_LARGE.value(), "파일 크기가 너무 큽니다. 최대 5MB까지 업로드 가능합니다.");
+            return ResponseEntity.status(HttpStatus.PAYLOAD_TOO_LARGE).body(error);
+        }
 
         ApiError<String> error = ApiUtil.error(statusCode.value(), "알 수 없는 오류가 발생했습니다. 문의 바랍니다.");
         return super.handleExceptionInternal(ex, error, headers, statusCode, request);
