@@ -418,6 +418,7 @@ public class UserService {
     public void deleteUserAccount(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("not found userId: " + userId));
+        awss3Service.deleteImage(user.getProfileImage());
         userRepository.deleteById(userId);
     }
 
