@@ -40,7 +40,7 @@
 
 [**🔗 프론트엔드 저장소 바로가기 Click !**](https://github.com/URECA-Cookie/Cookie-FE) 👈
 
-[**🔗 백엔드(메인 서버) 저장소 바로가기 Click !**](https://github.com/URECA-Cookie/Cookie-BE) 👈
+[**🔗 백엔드 저장소 바로가기 Click !**](https://github.com/URECA-Cookie/Cookie-BE) 👈
 
 
 
