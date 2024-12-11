@@ -216,14 +216,6 @@ public class UserService {
             }
         }
 
-        if (!user.getNickname().equals(nickname) && userRepository.existsByNickname(nickname)) {
-            throw new IllegalArgumentException(nickname + "은(는) 이미 존재하는 닉네임입니다.");
-        }
-
-        if (nickname == null || nickname.trim().isEmpty()) {
-            throw new IllegalArgumentException("닉네임을 입력해 주세요.");
-        }
-
         String profileImageUrl = user.getProfileImage();
         if (profileImage != null && !profileImage.isEmpty()) { // profile null 이 아닐 경우
             profileImageUrl = awss3Service.uploadImage(profileImage);
@@ -316,6 +308,10 @@ public class UserService {
 
     public boolean isDuplicateNicknameRegister(String nickname) {
         return userRepository.existsByNickname(nickname);
+    }
+
+    public boolean isDuplicateNicknameSetting(String nickname, String userNickname) {
+        return !userNickname.equals(nickname) && userRepository.existsByNickname(nickname);
     }
 
     @Transactional
@@ -418,6 +414,7 @@ public class UserService {
     public void deleteUserAccount(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("not found userId: " + userId));
+        awss3Service.deleteImage(user.getProfileImage());
         userRepository.deleteById(userId);
     }
 
