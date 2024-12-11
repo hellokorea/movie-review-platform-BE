@@ -4,10 +4,7 @@ package com.cookie.domain.notification.service;
 import com.cookie.domain.category.repository.CategoryRepository;
 import com.cookie.domain.category.entity.Category;
 import com.cookie.domain.user.repository.UserRepository;
-import com.google.firebase.messaging.FirebaseMessaging;
-import com.google.firebase.messaging.FirebaseMessagingException;
-import com.google.firebase.messaging.Message;
-import com.google.firebase.messaging.Notification;
+import com.google.firebase.messaging.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -87,11 +84,12 @@ public class NotificationService {
 //            }
 
             Message message = Message.builder()
-                    .setToken(token)
-                    .setNotification(Notification.builder()
-                            .setTitle(title)
-                            .setBody(body)
+                    .setWebpushConfig(WebpushConfig.builder()
+                            .putHeader("Urgency", "high")
                             .build())
+                    .putData("title", title)
+                    .putData("body", body)
+                    .setToken(token)
                     .build();
 
             try {
@@ -104,3 +102,4 @@ public class NotificationService {
     }
 
 }
+
