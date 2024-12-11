@@ -104,5 +104,10 @@ public class User extends BaseTimeEntity {
         this.category = genreId;
     }
 
+    public void updatePushNotification(boolean isPushEnabled) {
+        this.isPushEnabled = isPushEnabled;
+    }
+
 }
+
 

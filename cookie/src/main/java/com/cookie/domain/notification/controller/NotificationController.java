@@ -4,6 +4,7 @@ import com.cookie.domain.notification.dto.request.FcmTokenRequest;
 import com.cookie.domain.notification.service.FcmTokenService;
 import com.cookie.domain.notification.service.NotificationService;
 import com.cookie.domain.user.dto.response.auth.CustomOAuth2User;
+import com.cookie.domain.user.service.UserService;
 import com.cookie.global.util.ApiUtil;
 import com.cookie.global.util.ApiUtil.ApiSuccess;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 public class NotificationController {
 
     private final FcmTokenService fcmTokenService;
+    private final UserService userService;
 
     @PostMapping("/fcm-token")
     public ApiSuccess<?> saveFcmToken(@AuthenticationPrincipal CustomOAuth2User customOAuth2User, @RequestBody FcmTokenRequest fcmTokenRequest) {
@@ -28,6 +30,13 @@ public class NotificationController {
     public ApiSuccess<?> deleteFcmToken(@AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
         Long userId = customOAuth2User.getId();
         fcmTokenService.deleteFcmToken(userId); // 토큰 삭제
+        return ApiUtil.success("SUCCESS");
+    }
+
+    @PostMapping("/settings")
+    public ApiSuccess<?> toggleNotification(@AuthenticationPrincipal CustomOAuth2User customOAuth2User, @RequestBody FcmTokenRequest fcmTokenRequest) {
+        Long userId = customOAuth2User.getId();
+        userService.togglePushNotification(userId, fcmTokenRequest);
         return ApiUtil.success("SUCCESS");
     }
 

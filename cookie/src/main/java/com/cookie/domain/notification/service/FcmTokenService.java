@@ -18,7 +18,7 @@ public class FcmTokenService {
     private final FcmTokenRepository fcmTokenRepository;
 
     public void saveFcmToken(Long userId, String token) {
-        log.info("saveToken userId: {} and token: {}", userId, token);
+        log.info("Start saveToken userId: {} and token: {}", userId, token);
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("not found userId: " + userId));

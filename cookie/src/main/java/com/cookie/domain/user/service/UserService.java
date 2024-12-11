@@ -8,7 +8,9 @@ import com.cookie.domain.movie.entity.Movie;
 import com.cookie.domain.movie.entity.MovieLike;
 import com.cookie.domain.movie.repository.MovieLikeRepository;
 import com.cookie.domain.movie.repository.MovieRepository;
+import com.cookie.domain.notification.dto.request.FcmTokenRequest;
 import com.cookie.domain.notification.repository.FcmTokenRepository;
+import com.cookie.domain.notification.service.FcmTokenService;
 import com.cookie.domain.notification.service.NotificationService;
 import com.cookie.domain.review.dto.response.ReviewPagenationResponse;
 import com.cookie.domain.review.dto.response.ReviewResponse;
@@ -57,6 +59,7 @@ public class UserService {
     private final ReviewLikeRepository reviewLikeRepository;
     private final NotificationService notificationService;
     private final FcmTokenRepository fcmTokenRepository;
+    private final FcmTokenService fcmTokenService;
 
     @Transactional(readOnly = true)
     public MyPageResponse getMyPage(Long userId) {
@@ -421,5 +424,36 @@ public class UserService {
         userRepository.deleteById(userId);
     }
 
+    @Transactional
+    public void togglePushNotification(Long userId, FcmTokenRequest fcmTokenRequest) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("not found userId: " + userId));
+
+        boolean newPushEnabled = !user.isPushEnabled();
+        user.updatePushNotification(newPushEnabled);
+
+        if (newPushEnabled) {
+            // 푸쉬 알림이 켜질 경우 FCM 토큰 생성 및 저장
+            try {
+                String fcmToken = fcmTokenRequest.getToken();
+                if (fcmToken == null || fcmToken.isEmpty()) {
+                    throw new IllegalArgumentException("푸쉬 알림을 활성화하려면 FCM 토큰이 필요합니다.");
+                }
+                fcmTokenService.saveFcmToken(userId, fcmToken);
+            } catch (Exception e) {
+                log.error("푸쉬 알림 활성화 중 FCM 토큰 저장에 실패했습니다. userId: {}", userId, e);
+                throw new RuntimeException("Failed to save FCM token.");
+            }
+        } else {
+            // 푸쉬 알림이 꺼질 경우 FCM 토큰 삭제
+            try {
+                fcmTokenService.deleteFcmToken(userId);
+            } catch (Exception e) {
+                log.error("푸쉬 알림 비활성화 중 FCM 토큰 삭제에 실패했습니다. userId: {}", userId, e);
+            }
+        }
+    }
+
 }
+
 
