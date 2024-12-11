@@ -21,13 +21,14 @@ public class RewardPointService {
 
 
     private final RewardCacheService rewardCacheService;
+    private final RewardHistoryService rewardHistoryService;
 
     private final UserBadgeRepository userBadgeRepository;
     private final BadgeAccumulationPointRepository badgeAccumulationPointRepository;
     private final BadgeRepository badgeRepository;
 
     @Transactional
-    public void updateBadgePointFromReview(User user, String actionName) {
+    public void updateBadgePointFromReview(User user, String actionName, String movieName) {
 
         Long actionPoint = rewardCacheService.getActionPointByCache(actionName);
 
@@ -36,6 +37,7 @@ public class RewardPointService {
         Long sumPoint = currentUserPoint + actionPoint;
 
         userPoint.updateAccPoint(sumPoint);
+        rewardHistoryService.createRewardHistoryByUser(user, actionName, actionPoint, movieName);
 
         checkAndAssignBadge(user, sumPoint);
     }
@@ -75,6 +77,11 @@ public class RewardPointService {
                 .build();
 
         userBadgeRepository.save(userBadge);
+    }
+
+    @Transactional
+    public void updateBadgePointFromMatchUp() {
+
     }
 }
 
