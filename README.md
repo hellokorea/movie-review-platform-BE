@@ -234,3 +234,41 @@
 
 ## 💻 실행 방법
 
+
+  1. AWS EC2 인스턴스 프로비저닝 및 초기 설정
+      - 프론트엔드 및 백엔드 서버를 호스팅하기 위해 Amazon Web Services(AWS)에서 Ubuntu 기반 EC2 인스턴스를 생성
+  
+  2. Nginx와 Git 설치
+      - HTTP 및 Reverse Proxy 서버 역할을 수행하기 위해 Nginx 설치
+      - 배포용 애플리케이션 코드를 관리하기 위해 Git 설치
+  
+  3. React 기반 프론트엔드 배포
+      - GitHub Repository에서 클론한 소스 코드를 빌드하여 생성된 정적 파일을 Nginx가 제공하는 기본 디렉터리로 복사
+  
+  4. Spring Boot 기반 백엔드 배포
+      - 동일한 EC2 인스턴스에 Spring Boot 애플리케이션 Repository를 클론 후 빌드하여 실행
+      - application.properties를 통해 AWS RDS(MySQL)와 MongoDB와의 연결 정보 설정
+  
+  5. AWS RDS 데이터베이스 설정
+      - RDS 인스턴스(MySQL) 생성, 인바운드 규칙에서 EC2 인스턴스의 IP를 허용하여 네트워크 접근성 보장
+      - 데이터베이스 스키마 설정, 애플리케이션이 동작하는 데 필요한 데이터 마이그레이션
+  
+  6. MongoDB 인프라 구성
+      - 실시간 채팅 기능의 지원을 위해 별도의 EC2 인스턴스에 MongoDB 설치
+      - MongoDB EC2의 인바운드 규칙을 설정하여 백엔드 서버 EC2에서만 접근 가능하도록 보안 그룹을 구성 (개발 단계에서는 모두 접근 허용)
+  
+  7. Nginx Reverse Proxy 설정
+      - 프론트엔드와 백엔드의 경로를 Nginx를 통해 Reverse Proxy로 설정
+      - / 경로는 Vite로 빌드된 React 정적 파일을 제공하며 /var/www/html 디렉터리에서 서비스
+      - /api/ 및 OAuth2 관련 경로는 Spring Boot 애플리케이션으로 프록시
+      - HTTPS를 활성화하여 Let's Encrypt를 사용한 SSL 인증서 적용
+      - CORS(Cross-Origin Resource Sharing) 설정을 통해 안전한 데이터 통신 지원
+  
+  8. HTTPS 활성화 및 도메인 설정
+      - Gabia에서 도메인 구매 후, DNS 설정을 통해 EC2 인스턴스의 퍼블릭 IP와 연결
+      - Let’s Encrypt의 Certbot을 사용하여 SSL 인증서를 발급받아 HTTPS를 활성화
+      - Nginx 설정을 수정하여 HTTP 요청을 HTTPS로 리다이렉트하도록 설정
+  
+  9. 테스트 및 최종 배포
+      - 배포된 프론트엔드와 백엔드의 HTTP/HTTPS 요청이 정상적으로 처리되는지 테스트
+      - HTTPS를 통한 보안 트래픽 처리와 도메인 연결을 성공적으로 설정하여 클라이언트와 서버 간 원활한 통신을 보장
