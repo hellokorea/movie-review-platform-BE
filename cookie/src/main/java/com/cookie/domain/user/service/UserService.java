@@ -89,6 +89,7 @@ public class UserService {
         return MyPageResponse.builder()
                 .nickname(nickname)
                 .profileImage(profileImage)
+                .pushEnabled(user.isPushEnabled())
                 .badge(badgeDtos)
                 .badgePoint(myBadgeTotalPoint)
                 .reviews(reviewDtos)
