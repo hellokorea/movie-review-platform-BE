@@ -246,6 +246,8 @@ public class UserService {
         String profileImageUrl = user.getProfileImage();
         if (profileImage != null && !profileImage.isEmpty()) { // profile null 이 아닐 경우
             profileImageUrl = awss3Service.uploadImage(profileImage);
+        } else if (profileImageUrl == null || profileImageUrl.isEmpty()) {
+            profileImageUrl = "https://uplus-bucket.s3.ap-northeast-2.amazonaws.com/6bc46d8d-b_default.jpeg";
         }
 
         List<UserBadge> userBadges = userBadgeRepository.findAllByUserId(userId);
