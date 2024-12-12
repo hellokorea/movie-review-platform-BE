@@ -127,7 +127,7 @@ public class ReviewService {
 
         stepTime = System.currentTimeMillis();
 //        sendReviewCreatedEvent(savedReview, reviewEmitters);
-        rewardPointService.updateBadgePointFromReview(user, "review");
+        rewardPointService.updateBadgePointAndBadgeObtain(user, "review", movie.getTitle());
         log.info("Sent review created event, Time Taken: {} ms", System.currentTimeMillis() - stepTime);
 
         log.info("End createReview, Total Time Taken: {} ms", System.currentTimeMillis() - startTime);
@@ -240,7 +240,7 @@ public class ReviewService {
                 review.getReviewLike(),
                 review.getCreatedAt(),
                 review.getUpdatedAt(),
-                new ReviewMovieResponse(review.getMovie().getTitle(), review.getMovie().getPoster()),
+                new ReviewMovieResponse(review.getMovie().getId(), review.getMovie().getTitle(), review.getMovie().getPoster()),
                 new ReviewUserResponse(
                         review.getUser().getId(),
                         review.getUser().getNickname(),

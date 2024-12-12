@@ -60,7 +60,7 @@ public class JWTUtil {
     }
 
     public String createAccessToken(Long id, String username, String role) {
-        long expiredMs = 1000L * 60 * 15; // 15분
+        long expiredMs = 1000L * 60 * 60 * 24 * 3; // 3days
 
         return Jwts.builder()
                 .claim("id", id)

@@ -137,6 +137,14 @@ public class NotificationService {
             log.warn("알림이 존재하지 않습니다. userId: {}", userId);
             return;
         }
+            Message message = Message.builder()
+                    .setWebpushConfig(WebpushConfig.builder()
+                            .putHeader("Urgency", "high")
+                            .build())
+                    .putData("title", title)
+                    .putData("body", body)
+                    .setToken(token)
+                    .build();
 
         for (int i = 0; i < notifications.size(); i++) {
             try {

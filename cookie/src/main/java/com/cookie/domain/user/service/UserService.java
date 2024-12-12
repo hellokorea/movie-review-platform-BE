@@ -16,6 +16,8 @@ import com.cookie.domain.review.dto.response.ReviewPagenationResponse;
 import com.cookie.domain.review.dto.response.ReviewResponse;
 import com.cookie.domain.review.entity.ReviewLike;
 import com.cookie.domain.review.repository.ReviewLikeRepository;
+import com.cookie.domain.reward.entity.RewardHistory;
+import com.cookie.domain.reward.repository.RewardHistoryRepository;
 import com.cookie.domain.user.dto.response.*;
 import com.cookie.domain.review.entity.Review;
 import com.cookie.domain.user.entity.*;
@@ -34,7 +36,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -60,6 +63,7 @@ public class UserService {
     private final NotificationService notificationService;
     private final FcmTokenRepository fcmTokenRepository;
     private final FcmTokenService fcmTokenService;
+    private final RewardHistoryRepository rewardHistoryRepository;
 
     @Transactional(readOnly = true)
     public MyPageResponse getMyPage(Long userId) {
@@ -72,8 +76,8 @@ public class UserService {
         // 2. 유저의 뱃지 조회
         List<MyBadgeResponse> badgeDtos = getAllBadgesByUserId(userId);
 
-        // 3. 유저의 장르 점수 조회
-        List<GenreScoreResponse> genreScoreDtos = getGenreScoresByUserId(userId);
+        // 3. 유저의 뱃지 포인트 조회
+        Long myBadgeTotalPoint = rewardHistoryRepository.findTotalBadgePointsByUser(userId);
 
         // 4. 유저의 리뷰 조회 (4개)
         List<ReviewResponse> reviewDtos = getReviewsByUserId(userId).stream()
@@ -86,7 +90,7 @@ public class UserService {
                 .nickname(nickname)
                 .profileImage(profileImage)
                 .badge(badgeDtos)
-                .genreScores(genreScoreDtos)
+                .badgePoint(myBadgeTotalPoint)
                 .reviews(reviewDtos)
                 .build();
     }
@@ -203,6 +207,29 @@ public class UserService {
                 .build();
     }
 
+    @Transactional(readOnly = true)
+    public List<MyBadgeHistoryResponse> getMyBadgePointHistory(Long userId) {
+
+        userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("User not found with id: " + userId));
+
+        LocalDateTime endDate = LocalDateTime.now();
+        LocalDateTime startDate = endDate.minusDays(30);
+
+        List<RewardHistory> rewardHistoryRepositories = rewardHistoryRepository.findBadgePointHistories(userId, startDate, endDate);
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+        return rewardHistoryRepositories.stream()
+                .map(history ->
+                        MyBadgeHistoryResponse.builder()
+                                .actionName(history.getAction())
+                                .point(history.getActionPoint())
+                                .movieName(history.getMovieName())
+                                .createdAt(history.getCreatedAt().format(dateTimeFormatter))
+                                .build())
+                .collect(Collectors.toList());
+    }
+
     @Transactional
     public void updateMyProfile(Long userId, MultipartFile profileImage, String nickname, String mainBadgeIdStr, String genreIdStr) {
         User user = userRepository.findById(userId)
@@ -219,17 +246,11 @@ public class UserService {
             }
         }
 
-        if (!user.getNickname().equals(nickname) && userRepository.existsByNickname(nickname)) {
-            throw new IllegalArgumentException(nickname + "은(는) 이미 존재하는 닉네임입니다.");
-        }
-
-        if (nickname == null || nickname.trim().isEmpty()) {
-            throw new IllegalArgumentException("닉네임을 입력해 주세요.");
-        }
-
         String profileImageUrl = user.getProfileImage();
         if (profileImage != null && !profileImage.isEmpty()) { // profile null 이 아닐 경우
             profileImageUrl = awss3Service.uploadImage(profileImage);
+        } else if (profileImageUrl == null || profileImageUrl.isEmpty()) {
+            profileImageUrl = "https://uplus-bucket.s3.ap-northeast-2.amazonaws.com/6bc46d8d-b_default.jpeg";
         }
 
         List<UserBadge> userBadges = userBadgeRepository.findAllByUserId(userId);
@@ -319,6 +340,10 @@ public class UserService {
 
     public boolean isDuplicateNicknameRegister(String nickname) {
         return userRepository.existsByNickname(nickname);
+    }
+
+    public boolean isDuplicateNicknameSetting(String nickname, String userNickname) {
+        return !userNickname.equals(nickname) && userRepository.existsByNickname(nickname);
     }
 
     @Transactional
@@ -421,6 +446,8 @@ public class UserService {
     public void deleteUserAccount(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("not found userId: " + userId));
+        rewardHistoryRepository.deleteByUserId(userId);
+        awss3Service.deleteImage(user.getProfileImage());
         userRepository.deleteById(userId);
     }
 
