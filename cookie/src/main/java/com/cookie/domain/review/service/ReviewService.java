@@ -115,19 +115,13 @@ public class ReviewService {
 
         for (String genre : enGenres) {
             stepTime = System.currentTimeMillis();
-            List<String> userTokens = userRepository.findTokensByGenreAndExcludeUser(genre, userId);
+            List<String> userTokens = userRepository.findTokensByGenreAndExcludeUser(genre, userId); // 알림을 받는 사람들의 토큰 목록
             log.info("Fetched user tokens for genre '{}', Time Taken: {} ms", genre, System.currentTimeMillis() - stepTime);
-
-//            stepTime = System.currentTimeMillis();
-//            List<String> excludedTokens = user.getFcmTokens().stream()
-//                    .map(FcmToken::getToken)
-//                    .toList();
-//            log.info("Extracted excluded tokens, Time Taken: {} ms", System.currentTimeMillis() - stepTime);
 
             stepTime = System.currentTimeMillis();
             String title ="Cookie 🍪";
             String body = String.format("%s님이 %s 영화에 리뷰를 등록했어요!.", user.getNickname(), movie.getTitle());
-            notificationService.sendPushNotificationToUsers(userTokens, title, body);
+            notificationService.sendPushNotificationToUsers(userId, userTokens, title, body, savedReview.getId());
             log.info("Sent push notification for genre '{}', Time Taken: {} ms", genre, System.currentTimeMillis() - stepTime);
         }
 
@@ -155,47 +149,6 @@ public class ReviewService {
 //            }
 //        }
 //    }
-
-//    @Async
-//    public void sendPushNotification(Long userId, Movie movie, Review review, CopyOnWriteArrayList<SseEmitter> pushNotificationEmitters) {
-//        log.info("movie title: {}", movie.getTitle());
-//
-//        List<String> genres = movieRepository.findGenresByMovieId(movie.getId());
-//        log.info("영화 [{}]의 장르 정보: {}", movie.getTitle(), genres);
-//
-//        List<User> genreFans = userRepository.findUsersByFavoriteGenresInAndExcludeUserId(genres, userId);
-//        log.info("장르를 좋아하는 유저 {}명", genreFans.size());
-//
-//        PushNotification pushNotification = new PushNotification(review.getMovie().getId(), review.getMovie().getTitle(), review.getUser().getNickname());
-//
-//        sendNotificationToUser(genreFans, pushNotification, pushNotificationEmitters);
-//    }
-//    private void sendNotificationToUser(List<User> genreFans, PushNotification pushNotification, CopyOnWriteArrayList<SseEmitter> pushNotificationEmitters) {
-//        for (User fan : genreFans) {
-//            if (fan.isPushEnabled()) { // pushEnabled 가 true 인 경우에만 알림 전송
-//                try {
-//                    String notificationMessage = String.format("[%s]님 새로운 리뷰가 등록되었습니다! [%s]", fan.getNickname(), pushNotification.getMovieTitle());
-//                    log.info("푸시 알림 전송 성공: {}", notificationMessage);
-//
-//                    for (SseEmitter emitter : pushNotificationEmitters) {
-//                        try {
-//                            emitter.send(SseEmitter.event()
-//                                    .name("push-notification")
-//                                    .data(pushNotification));
-//                        } catch (Exception e) {
-//                            log.error("Failed to send event to emitter for user [{}]: {}", fan.getId(), e.getMessage());
-//                            pushNotificationEmitters.remove(emitter);
-//                        }
-//                    }
-//                } catch (Exception e) {
-//                    log.error("Failed to send push notification to user: {}", fan.getId(), e);
-//                }
-//            } else {
-//                log.info("유저 [{}]는 푸시 알림을 비활성화 했습니다.", fan.getId());
-//            }
-//        }
-//    }
-
 
     @Transactional
     public void updateReview(Long reviewId, UpdateReviewRequest updateReviewRequest) {
