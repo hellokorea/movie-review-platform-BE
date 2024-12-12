@@ -19,7 +19,7 @@ public class RewardCacheService {
 
     @Cacheable(value = "pointLivedCache", key = "'action:' + #actionName", cacheManager = "pointLivedCacheManager")
     public Long getActionPointByCache(String actionName) {
-        log.info("최초 DB 에서 조회 -> actionId: {} from DB", actionName);
+        log.info("최초 DB 에서 조회 -> actionName: {} from DB", actionName);
         return badgeActionRepository.findBadgeActionByName(actionName)
                 .map(BadgeAction::getActionPoint)
                 .orElseThrow(() -> new IllegalArgumentException("해당 action name 이 존재하지 않습니다."));

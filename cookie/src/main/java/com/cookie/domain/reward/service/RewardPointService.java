@@ -28,7 +28,7 @@ public class RewardPointService {
     private final BadgeRepository badgeRepository;
 
     @Transactional
-    public void updateBadgePointFromReview(User user, String actionName, String movieName) {
+    public void updateBadgePointAndBadgeObtain(User user, String actionName, String movieName) {
 
         Long actionPoint = rewardCacheService.getActionPointByCache(actionName);
 
@@ -77,11 +77,6 @@ public class RewardPointService {
                 .build();
 
         userBadgeRepository.save(userBadge);
-    }
-
-    @Transactional
-    public void updateBadgePointFromMatchUp() {
-
     }
 }
 

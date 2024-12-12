@@ -20,6 +20,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -237,13 +238,38 @@ public class MatchUpService {
         }
     }
 
-    @Transactional
-    public void updateMatchUpStatusToExpired() {
+    public List<MatchUpCloseResponse> expireAndReturnMatchUps() {
         List<MatchUp> nowMatchUps = matchUpRepository.findByStatus(MatchUpStatus.NOW);
+        List<MatchUpCloseResponse> matchUpCloseResponses = new ArrayList<>();
+
         for (MatchUp matchUp : nowMatchUps) {
-            matchUp.updateWinner(); // 우승자 갱신
+            matchUp.updateWinner();
             matchUp.changeStatus(MatchUpStatus.EXPIRATION);
             matchUpRepository.save(matchUp);
+
+            MatchUpMovie winMovie = findWinnerMovie(matchUp);
+
+            List<User> winUsers = matchUpParticipationRepository.findWinnerUsers(winMovie.getId());
+
+            matchUpCloseResponses.addAll(winUsers.stream()
+                    .map(winUser ->
+                            MatchUpCloseResponse.builder()
+                                    .movieName(winMovie.getMovieTitle())
+                                    .user(winUser)
+                                    .build())
+                    .toList());
+        }
+
+        return matchUpCloseResponses;
+    }
+
+    private MatchUpMovie findWinnerMovie(MatchUp matchUp) {
+        if (matchUp.getMovie1().isWin()) {
+            return matchUp.getMovie1();
+        } else if (matchUp.getMovie2().isWin()) {
+            return matchUp.getMovie2();
+        } else {
+            throw new IllegalArgumentException("승자 영화가 존재하지 않습니다.");
         }
     }
 
