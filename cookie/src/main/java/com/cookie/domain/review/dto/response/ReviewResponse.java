@@ -39,6 +39,7 @@ public class ReviewResponse {
                 review.getCreatedAt(),
                 review.getUpdatedAt(),
                 new ReviewMovieResponse(
+                        review.getMovie().getId(),
                         review.getMovie().getTitle(),
                         review.getMovie().getPoster()
                 ),

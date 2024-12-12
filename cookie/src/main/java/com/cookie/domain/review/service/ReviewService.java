@@ -287,7 +287,7 @@ public class ReviewService {
                 review.getReviewLike(),
                 review.getCreatedAt(),
                 review.getUpdatedAt(),
-                new ReviewMovieResponse(review.getMovie().getTitle(), review.getMovie().getPoster()),
+                new ReviewMovieResponse(review.getMovie().getId(), review.getMovie().getTitle(), review.getMovie().getPoster()),
                 new ReviewUserResponse(
                         review.getUser().getId(),
                         review.getUser().getNickname(),
