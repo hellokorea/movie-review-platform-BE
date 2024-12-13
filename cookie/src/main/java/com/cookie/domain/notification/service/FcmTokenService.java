@@ -7,6 +7,7 @@ import com.cookie.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -17,8 +18,9 @@ public class FcmTokenService {
     private final UserRepository userRepository;
     private final FcmTokenRepository fcmTokenRepository;
 
+    @Transactional
     public void saveFcmToken(Long userId, String token) {
-        log.info("saveToken userId: {} and token: {}", userId, token);
+        log.info("Start saveToken userId: {} and token: {}", userId, token);
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("not found userId: " + userId));
@@ -47,6 +49,7 @@ public class FcmTokenService {
         }
     }
 
+    @Transactional
     public void deleteFcmToken(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("not found userId: " + userId));
