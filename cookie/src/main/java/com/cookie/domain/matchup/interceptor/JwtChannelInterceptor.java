@@ -32,7 +32,7 @@ public class JwtChannelInterceptor implements ChannelInterceptor {
             log.warn("HeaderAccessor is null");
         }
 
-        if (headerAccessor.getCommand() != StompCommand.CONNECT) {
+        if (headerAccessor.getCommand() == StompCommand.CONNECT) {
             List<String> authHeader = headerAccessor.getNativeHeader("Authorization");
             if (authHeader == null || ((List<?>) authHeader).isEmpty()) {
                 log.warn("Authorization header is missing");
