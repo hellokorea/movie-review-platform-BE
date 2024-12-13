@@ -41,7 +41,8 @@ public class ReviewResponse {
                 new ReviewMovieResponse(
                         review.getMovie().getId(),
                         review.getMovie().getTitle(),
-                        review.getMovie().getPoster()
+                        review.getMovie().getPoster(),
+                        review.getMovie().getScore()
                 ),
                 new ReviewUserResponse(
                         review.getUser().getId(),

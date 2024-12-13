@@ -11,4 +11,5 @@ public class ReviewMovieResponse {
     private Long movieId;
     private String title;
     private String poster;
+    private double score;
 }
