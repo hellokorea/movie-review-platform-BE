@@ -9,7 +9,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -25,7 +24,6 @@ public class SearchService {
 
     public List<SearchMovieResponse> searchActors(String keyword, Pageable pageable) {
         Page<Movie> movies = movieRepository.findMoviesByActorName(keyword, pageable);
-
         return movies.stream()
                 .map(SearchMovieResponse::fromMovie)
                 .toList();
@@ -38,4 +36,3 @@ public class SearchService {
                 .toList();
     }
 }
-

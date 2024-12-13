@@ -45,6 +45,7 @@ public interface MovieRepository extends JpaRepository<Movie, Long> {
     """)
     void deleteByMovieId(@Param("movieId") Long movieId);
 
+    @Query("SELECT m FROM Movie m WHERE m.title LIKE :keyword%")
     Page<Movie> findByTitle(String keyword, Pageable pageable);
 
     @Query("SELECT ma.movie FROM MovieActor ma WHERE ma.actor.name LIKE :keyword%")
