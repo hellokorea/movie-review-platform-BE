@@ -26,8 +26,10 @@ public class JwtChannelInterceptor implements ChannelInterceptor {
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
         StompHeaderAccessor headerAccessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
 
-        if (headerAccessor == null) {
-            return message;
+        if (headerAccessor != null) {
+            log.info("Stomp Command: {}", headerAccessor.getCommand());
+        } else {
+            log.warn("HeaderAccessor is null");
         }
 
         if (headerAccessor.getCommand() == StompCommand.CONNECT) {
