@@ -1,11 +1,9 @@
 package com.cookie.domain.actor.repository;
 
 import com.cookie.domain.actor.dto.response.ActorResponse;
-import com.cookie.domain.actor.dto.response.ActorResponse;
 import com.cookie.domain.actor.entity.Actor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -35,6 +33,21 @@ public interface ActorRepository extends JpaRepository<Actor, Long> {
             + "JOIN MovieActor ma ON ma.actor.id = a.id "
             + "WHERE ma.movie.id = :movieId")
     List<ActorResponse> findActorsByMovieId(@Param("movieId") Long movieId);
+
+
+    @Query("""
+        SELECT a.profileImage
+        FROM Actor a
+    """)
+    List<String> findAllTMDBImages();
+
+    @Modifying
+    @Query("""
+        UPDATE Actor a
+        SET a.profileImage = :cloudFrontUrl
+        WHERE a.profileImage = :TmdbBUrl
+    """)
+    void updateImageByFileName(@Param("TmdbBUrl") String TmdbBUrl, @Param("cloudFrontUrl") String cloudFrontUrl);
 }
 
 

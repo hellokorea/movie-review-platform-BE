@@ -5,8 +5,10 @@ import com.cookie.admin.service.movie.AdminMovieCreateService;
 import com.cookie.admin.service.movie.AdminMovieModifyService;
 import com.cookie.admin.service.movie.AdminMovieReadService;
 import com.cookie.admin.service.movie.AdminMovieSearchService;
+import com.cookie.global.service.AWSS3CndService;
 import com.cookie.global.util.ApiUtil;
 import com.cookie.global.util.ApiUtil.ApiSuccess;
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -30,6 +32,7 @@ public class AdminMovieController {
     private final AdminMovieReadService adminMovieReadService;
     private final AdminMovieModifyService adminMovieModifyService;
     private final AdminMovieSearchService adminMovieSearchService;
+    private final AWSS3CndService awss3CndService;
 
     @Operation(summary = "영화 초기 세팅 값 - 4600편", responses = {
             @ApiResponse(responseCode = "200", content = @Content(mediaType = "application/json",
@@ -136,5 +139,12 @@ public class AdminMovieController {
     public ApiSuccess<?> getMovies(@PathVariable("pageNumber") Integer pageNumber) {
         AdminMoviesResponse data = adminMovieSearchService.getMovies(pageNumber);
         return ApiUtil.success(data);
+    }
+
+    @Hidden
+    @PostMapping("/movies/updateUrl")
+    public ApiSuccess<?> updateImagesByOnce() {
+        awss3CndService.updateImagesByOnce();
+        return ApiUtil.success("SUCCESS");
     }
 }

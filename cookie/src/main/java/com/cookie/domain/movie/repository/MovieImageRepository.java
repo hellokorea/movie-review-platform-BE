@@ -20,4 +20,17 @@ public interface MovieImageRepository extends JpaRepository<MovieImage, Long> {
     @Query("SELECT mi.url FROM MovieImage mi WHERE mi.movie.id = :movieId")
     List<String> findImageUrlsByMovieId(@Param("movieId") Long movieId);
 
+    @Query("""
+    SELECT mi.url
+    FROM MovieImage mi
+    """)
+    List<String> findAllTMDBImages();
+
+    @Modifying
+    @Query("""
+        UPDATE MovieImage mi
+        SET mi.url = :cloudFrontUrl
+        WHERE mi.url = :TmdbBUrl
+    """)
+    void updateImageByFileName(@Param("TmdbBUrl") String TmdbBUrl, @Param("cloudFrontUrl") String cloudFrontUrl);
 }
