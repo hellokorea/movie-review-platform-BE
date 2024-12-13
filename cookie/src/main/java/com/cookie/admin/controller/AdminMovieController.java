@@ -163,10 +163,10 @@ public class AdminMovieController {
         return ApiUtil.success("SUCCESS");
     }
 
-    @Hidden
-    @PostMapping("/movies/updateUrl/images")
-    public ApiSuccess<?> updateMovieExtraImages() {
-        awss3CDNService.updateMovieExtraImages();
-        return ApiUtil.success("SUCCESS");
-    }
+//    @Hidden
+//    @PostMapping("/movies/updateUrl/images")
+//    public ApiSuccess<?> updateMovieExtraImages() {
+//        awss3CDNService.updateMovieExtraImages();
+//        return ApiUtil.success("SUCCESS");
+//    }
 }

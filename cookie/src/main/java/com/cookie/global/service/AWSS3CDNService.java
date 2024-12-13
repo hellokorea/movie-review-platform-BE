@@ -46,83 +46,49 @@ public class AWSS3CDNService {
 
     @Transactional
     public void updateMovieImages() {
-        processAndUploadImagesInBatch(movieRepository.findAllTMDBImages(), movieRepository::updateImageByFileName);
+        processAndUploadImages(movieRepository.findAllTMDBImages(), movieRepository::updateImageByFileName);
     }
 
     @Transactional
     public void updateActorImages() {
-        processAndUploadImagesInBatch(actorRepository.findAllTMDBImages(), actorRepository::updateImageByFileName);
+        processAndUploadImages(actorRepository.findAllTMDBImages(), actorRepository::updateImageByFileName);
     }
 
     @Transactional
     public void updateDirectorImages() {
-        processAndUploadImagesInBatch(directorRepository.findAllTMDBImages(), directorRepository::updateImageByFileName);
+        processAndUploadImages(directorRepository.findAllTMDBImages(), directorRepository::updateImageByFileName);
     }
 
-    @Transactional
-    public void updateMovieExtraImages() {
-        processAndUploadImagesInBatch(movieImageRepository.findAllTMDBImages(), movieImageRepository::updateImageByFileName);
-    }
+//    @Transactional
+//    public void updateMovieExtraImages() {
+//        processAndUploadImages(movieImageRepository.findAllTMDBImages(), movieImageRepository::updateImageByFileName);
+//    }
 
-    private void processAndUploadImagesInBatch(List<String> tmdbImageUrls, BiConsumer<String, String> updateRepository) {
-        ExecutorService executor = Executors.newFixedThreadPool(5);
-
-        for (int i = 0; i < tmdbImageUrls.size(); i += BATCH_SIZE) {
-            List<String> batch = tmdbImageUrls.subList(i, Math.min(i + BATCH_SIZE, tmdbImageUrls.size()));
-            List<Future<?>> futures = new ArrayList<>();
-
-            for (String url : batch) {
+    public void processAndUploadImages(List<String> tmdbImageUrls, BiConsumer<String, String> updateRepository) {
+        tmdbImageUrls.forEach(url -> {
+            try {
                 if (url == null || url.isEmpty() || url.endsWith("/null") || url.startsWith("https://d320gmmmso0682")) {
-                    continue;
+                    return;
                 }
-
-                futures.add(executor.submit(() -> {
-                    try {
-                        byte[] imageBytes = downloadImageFromTMDB(url);
-
-                        String fileName = extractFileNameFromUrl(url);
-
-                        uploadToS3(fileName, imageBytes);
-
-                        String cloudFrontUrl = cloudFrontBaseUrl + fileName;
-
-                        updateRepository.accept(url, cloudFrontUrl);
-                    } catch (Exception e) {
-                        log.error("Failed to process URL: {}", url, e);
-                    }
-                }));
+                byte[] imageBytes = downloadImageFromTMDB(url);
+                String fileName = extractFileNameFromUrl(url);
+                uploadToS3(fileName, imageBytes);
+                String cloudFrontUrl = cloudFrontBaseUrl + fileName;
+                updateRepository.accept(url, cloudFrontUrl);
+            } catch (Exception e) {
+                log.error("Failed to process URL: {}", url, e);
             }
-
-            for (Future<?> future : futures) {
-                try {
-                    future.get();
-                } catch (Exception e) {
-                    log.error("Error while processing tasks", e);
-                }
-            }
-        }
-
-        executor.shutdown();
-        try {
-            if (!executor.awaitTermination(60, TimeUnit.SECONDS)) {
-                executor.shutdownNow();
-            }
-        } catch (InterruptedException e) {
-            executor.shutdownNow();
-        }
+        });
     }
-
     private byte[] downloadImageFromTMDB(String imageUrl) throws IOException {
         URL url = new URL(imageUrl);
         try (InputStream inputStream = url.openStream()) {
             return inputStream.readAllBytes();
         }
     }
-
     private String extractFileNameFromUrl(String imageUrl) throws MalformedURLException {
         return Paths.get(new URL(imageUrl).getPath()).getFileName().toString();
     }
-
     private void uploadToS3(String s3Key, byte[] imageBytes) {
         String bucketName = "movie-images-bucket";
         ObjectMetadata metadata = new ObjectMetadata();
