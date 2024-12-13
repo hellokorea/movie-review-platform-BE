@@ -10,19 +10,13 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class SearchMovieResponse {
     private Long id;
-    private String title;
     private String poster;
-    private String releasedAt;
-    private String director;
 
     public static SearchMovieResponse fromMovie(Movie movie) {
 
         return new SearchMovieResponse(
                 movie.getId(),
-                movie.getTitle(),
-                movie.getPoster(),
-                movie.getReleasedAt(),
-                movie.getDirector().getName()
+                movie.getPoster()
         );
     }
 }
