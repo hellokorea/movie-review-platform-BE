@@ -25,7 +25,7 @@ import java.util.function.BiConsumer;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class AWSS3CndService {
+public class AWSS3CDNService {
 
     private final AmazonS3 amazonS3;
 
@@ -61,6 +61,8 @@ public class AWSS3CndService {
                 String cloudFrontUrl = cloudFrontBaseUrl + fileName;
 
                 updateRepository.accept(url, cloudFrontUrl);
+
+                Thread.sleep(200);
 
             } catch (Exception e) {
                 log.error("Failed to process URL: {}", url, e);

@@ -5,7 +5,7 @@ import com.cookie.admin.service.movie.AdminMovieCreateService;
 import com.cookie.admin.service.movie.AdminMovieModifyService;
 import com.cookie.admin.service.movie.AdminMovieReadService;
 import com.cookie.admin.service.movie.AdminMovieSearchService;
-import com.cookie.global.service.AWSS3CndService;
+import com.cookie.global.service.AWSS3CDNService;
 import com.cookie.global.util.ApiUtil;
 import com.cookie.global.util.ApiUtil.ApiSuccess;
 import io.swagger.v3.oas.annotations.Hidden;
@@ -32,7 +32,7 @@ public class AdminMovieController {
     private final AdminMovieReadService adminMovieReadService;
     private final AdminMovieModifyService adminMovieModifyService;
     private final AdminMovieSearchService adminMovieSearchService;
-    private final AWSS3CndService awss3CndService;
+    private final AWSS3CDNService awss3CDNService;
 
     @Operation(summary = "영화 초기 세팅 값 - 4600편", responses = {
             @ApiResponse(responseCode = "200", content = @Content(mediaType = "application/json",
@@ -144,7 +144,7 @@ public class AdminMovieController {
     @Hidden
     @PostMapping("/movies/updateUrl")
     public ApiSuccess<?> updateImagesByOnce() {
-        awss3CndService.updateImagesByOnce();
+        awss3CDNService.updateImagesByOnce();
         return ApiUtil.success("SUCCESS");
     }
 }
