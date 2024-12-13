@@ -45,14 +45,13 @@ public interface MovieRepository extends JpaRepository<Movie, Long> {
     """)
     void deleteByMovieId(@Param("movieId") Long movieId);
 
-    Page<Movie> findByTitleContainingIgnoreCase(String keyword, Pageable pageable);
+    Page<Movie> findByTitle(String keyword, Pageable pageable);
 
-    @Query("SELECT ma.movie FROM MovieActor ma JOIN FETCH ma.movie.director WHERE ma.actor.name LIKE %:keyword%")
+    @Query("SELECT ma.movie FROM MovieActor ma WHERE ma.actor.name LIKE :keyword%")
     Page<Movie> findMoviesByActorName(@Param("keyword") String keyword, Pageable pageable);
 
-
-    @Query("SELECT m FROM Movie m JOIN FETCH m.director WHERE LOWER(m.director.name) LIKE LOWER(CONCAT('%', :keyword, '%'))")
-    Page<Movie> findMoviesByDirectorNameContainingIgnoreCase(@Param("keyword") String keyword, Pageable pageable);
+    @Query("SELECT m FROM Movie m JOIN FETCH m.director WHERE m.director.name LIKE :keyword%")
+    Page<Movie> findMoviesByDirectorName(@Param("keyword") String keyword, Pageable pageable);
 
     @Query("""
     SELECT new com.cookie.domain.movie.dto.response.MovieSimpleResponse(

@@ -17,21 +17,22 @@ public class SearchService {
     private final MovieRepository movieRepository;
 
     public List<SearchMovieResponse> searchMovies(String keyword, Pageable pageable) {
-        Page<Movie> movies = movieRepository.findByTitleContainingIgnoreCase(keyword, pageable);
+        Page<Movie> movies = movieRepository.findByTitle(keyword, pageable);
         return movies.stream()
                 .map(SearchMovieResponse::fromMovie)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public List<SearchMovieResponse> searchActors(String keyword, Pageable pageable) {
         Page<Movie> movies = movieRepository.findMoviesByActorName(keyword, pageable);
+
         return movies.stream()
                 .map(SearchMovieResponse::fromMovie)
                 .toList();
     }
 
     public List<SearchMovieResponse> searchDirectors(String keyword, Pageable pageable) {
-        Page<Movie> movies = movieRepository.findMoviesByDirectorNameContainingIgnoreCase(keyword, pageable);
+        Page<Movie> movies = movieRepository.findMoviesByDirectorName(keyword, pageable);
         return movies.stream()
                 .map(SearchMovieResponse::fromMovie)
                 .toList();
