@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
 
 @Slf4j
@@ -38,56 +39,77 @@ public class AWSS3CDNService {
     private final DirectorRepository directorRepository;
     private final MovieImageRepository movieImageRepository;
 
+    private static final int BATCH_SIZE = 1000;
+
     @Value("${cloud.front.baseUrl}")
     private String cloudFrontBaseUrl;
 
     @Transactional
-    public void updateImagesByOnce() {
-        processAndUploadImages(movieRepository.findAllTMDBImages(), movieRepository::updateImageByFileName);
-        processAndUploadImages(actorRepository.findAllTMDBImages(), actorRepository::updateImageByFileName);
-        processAndUploadImages(directorRepository.findAllTMDBImages(), directorRepository::updateImageByFileName);
-        processAndUploadImages(movieImageRepository.findAllTMDBImages(), movieImageRepository::updateImageByFileName);
+    public void updateMovieImages() {
+        processAndUploadImagesInBatch(movieRepository.findAllTMDBImages(), movieRepository::updateImageByFileName);
     }
 
-    private void processAndUploadImages(List<String> tmdbImageUrls, BiConsumer<String, String> updateRepository) {
-        ExecutorService executor = Executors.newFixedThreadPool(5);
-        List<Future<?>> futures = new ArrayList<>();
+    @Transactional
+    public void updateActorImages() {
+        processAndUploadImagesInBatch(actorRepository.findAllTMDBImages(), actorRepository::updateImageByFileName);
+    }
 
-        for (String url : tmdbImageUrls) {
-            if (url == null || url.isEmpty() || url.endsWith("/null") || url.startsWith("https://d320gmmmso0682")) {
-                continue;
+    @Transactional
+    public void updateDirectorImages() {
+        processAndUploadImagesInBatch(directorRepository.findAllTMDBImages(), directorRepository::updateImageByFileName);
+    }
+
+    @Transactional
+    public void updateMovieExtraImages() {
+        processAndUploadImagesInBatch(movieImageRepository.findAllTMDBImages(), movieImageRepository::updateImageByFileName);
+    }
+
+    private void processAndUploadImagesInBatch(List<String> tmdbImageUrls, BiConsumer<String, String> updateRepository) {
+        ExecutorService executor = Executors.newFixedThreadPool(5);
+
+        for (int i = 0; i < tmdbImageUrls.size(); i += BATCH_SIZE) {
+            List<String> batch = tmdbImageUrls.subList(i, Math.min(i + BATCH_SIZE, tmdbImageUrls.size()));
+            List<Future<?>> futures = new ArrayList<>();
+
+            for (String url : batch) {
+                if (url == null || url.isEmpty() || url.endsWith("/null") || url.startsWith("https://d320gmmmso0682")) {
+                    continue;
+                }
+
+                futures.add(executor.submit(() -> {
+                    try {
+                        byte[] imageBytes = downloadImageFromTMDB(url);
+
+                        String fileName = extractFileNameFromUrl(url);
+
+                        uploadToS3(fileName, imageBytes);
+
+                        String cloudFrontUrl = cloudFrontBaseUrl + fileName;
+
+                        updateRepository.accept(url, cloudFrontUrl);
+                    } catch (Exception e) {
+                        log.error("Failed to process URL: {}", url, e);
+                    }
+                }));
             }
 
-            futures.add(executor.submit(() -> {
+            for (Future<?> future : futures) {
                 try {
-                    byte[] imageBytes = downloadImageFromTMDB(url);
-
-                    String fileName = extractFileNameFromUrl(url);
-
-                    uploadToS3(fileName, imageBytes);
-
-                    String cloudFrontUrl = cloudFrontBaseUrl + fileName;
-
-                    updateRepository.accept(url, cloudFrontUrl);
-
-                    Thread.sleep(200);
-
+                    future.get();
                 } catch (Exception e) {
-                    log.error("Failed to process URL: {}", url, e);
+                    log.error("Error while processing tasks", e);
                 }
-            }));
-        }
-
-        // 모든 작업이 끝날 때까지 기다림
-        for (Future<?> future : futures) {
-            try {
-                future.get();
-            } catch (Exception e) {
-                log.error("Error while processing tasks", e);
             }
         }
 
         executor.shutdown();
+        try {
+            if (!executor.awaitTermination(60, TimeUnit.SECONDS)) {
+                executor.shutdownNow();
+            }
+        } catch (InterruptedException e) {
+            executor.shutdownNow();
+        }
     }
 
     private byte[] downloadImageFromTMDB(String imageUrl) throws IOException {

@@ -141,10 +141,32 @@ public class AdminMovieController {
         return ApiUtil.success(data);
     }
 
+    // ---------- cdn 전용 - 1회성
     @Hidden
-    @PostMapping("/movies/updateUrl")
-    public ApiSuccess<?> updateImagesByOnce() {
-        awss3CDNService.updateImagesByOnce();
+    @PostMapping("/movies/updateUrl/posters")
+    public ApiSuccess<?> updateMovieImages() {
+        awss3CDNService.updateMovieImages();
+        return ApiUtil.success("SUCCESS");
+    }
+
+    @Hidden
+    @PostMapping("/movies/updateUrl/actors")
+    public ApiSuccess<?> updateActorImages() {
+        awss3CDNService.updateActorImages();
+        return ApiUtil.success("SUCCESS");
+    }
+
+    @Hidden
+    @PostMapping("/movies/updateUrl/directors")
+    public ApiSuccess<?> updateDirectorImages() {
+        awss3CDNService.updateDirectorImages();
+        return ApiUtil.success("SUCCESS");
+    }
+
+    @Hidden
+    @PostMapping("/movies/updateUrl/images")
+    public ApiSuccess<?> updateMovieExtraImages() {
+        awss3CDNService.updateMovieExtraImages();
         return ApiUtil.success("SUCCESS");
     }
 }
