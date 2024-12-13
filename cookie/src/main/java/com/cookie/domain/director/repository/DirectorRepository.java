@@ -4,6 +4,7 @@ import com.cookie.domain.director.entity.Director;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -26,4 +27,18 @@ public interface DirectorRepository extends JpaRepository<Director, Long> {
             WHERE d.id =:directorId
            """)
     List<Director> findAllMoviesByDirectorId(@Param("directorId")Long directorId);
+
+    @Query("""
+    SELECT d.profileImage
+    FROM Director d
+    """)
+    List<String> findAllTMDBImages();
+
+    @Modifying
+    @Query("""
+        UPDATE Director d
+        SET d.profileImage = :cloudFrontUrl
+        WHERE d.profileImage = :TmdbBUrl
+    """)
+    void updateImageByFileName(@Param("TmdbBUrl") String TmdbBUrl, @Param("cloudFrontUrl") String cloudFrontUrl);
 }

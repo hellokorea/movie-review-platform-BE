@@ -90,5 +90,18 @@ public interface MovieRepository extends JpaRepository<Movie, Long> {
     """)
     List<Movie> findAllByTMDBMovieIds(@Param("tmdbIds") Set<Long> tmdbIds);
 
+    @Query("""
+    SELECT m.poster
+    FROM Movie m
+    """)
+    List<String> findAllTMDBImages();
+
+    @Modifying
+    @Query("""
+    UPDATE Movie m
+    SET m.poster = :cloudFrontUrl
+    WHERE m.poster = :TmdbBUrl
+    """)
+    void updateImageByFileName(@Param("TmdbBUrl") String TmdbBUrl, @Param("cloudFrontUrl") String cloudFrontUrl);
 }
 
