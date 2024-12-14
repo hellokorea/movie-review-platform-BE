@@ -21,6 +21,7 @@ import java.net.URL;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.function.BiConsumer;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -56,7 +57,11 @@ public class AWSS3CDNService {
 
     @Transactional
     public void updateMovieExtraImages() {
-        processAndUploadImages(movieImageRepository.findAllTMDBImages(), movieImageRepository::updateImageByFileName);
+        List<String> filteredImages = movieImageRepository.findFirstImageUrlsPerMovie()
+                .stream()
+                .filter(url -> url != null && !url.isEmpty())
+                .collect(Collectors.toList());
+        processAndUploadImages(filteredImages, movieImageRepository::updateImageByFileName);
     }
 
     private void processAndUploadImages(List<String> tmdbImageUrls, BiConsumer<String, String> updateRepository) {
