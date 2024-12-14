@@ -19,12 +19,7 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
 
 @Slf4j
@@ -59,36 +54,51 @@ public class AWSS3CDNService {
         processAndUploadImages(directorRepository.findAllTMDBImages(), directorRepository::updateImageByFileName);
     }
 
-//    @Transactional
-//    public void updateMovieExtraImages() {
-//        processAndUploadImages(movieImageRepository.findAllTMDBImages(), movieImageRepository::updateImageByFileName);
-//    }
+    @Transactional
+    public void updateMovieExtraImages() {
+        processAndUploadImages(movieImageRepository.findAllTMDBImages(), movieImageRepository::updateImageByFileName);
+    }
 
-    public void processAndUploadImages(List<String> tmdbImageUrls, BiConsumer<String, String> updateRepository) {
-        tmdbImageUrls.forEach(url -> {
+    private void processAndUploadImages(List<String> tmdbImageUrls, BiConsumer<String, String> updateRepository) {
+        for (int i = 0; i < tmdbImageUrls.size(); i += BATCH_SIZE) {
+            List<String> batch = tmdbImageUrls.subList(i, Math.min(i + BATCH_SIZE, tmdbImageUrls.size()));
+            processBatch(batch, updateRepository); // 병렬 처리 없이 순차 실행
+        }
+    }
+    @Transactional
+    public void processBatch(List<String> urls, BiConsumer<String, String> updateRepository) {
+        urls.forEach(url -> {
             try {
                 if (url == null || url.isEmpty() || url.endsWith("/null") || url.startsWith("https://d320gmmmso0682")) {
                     return;
                 }
+
                 byte[] imageBytes = downloadImageFromTMDB(url);
+
                 String fileName = extractFileNameFromUrl(url);
                 uploadToS3(fileName, imageBytes);
+
                 String cloudFrontUrl = cloudFrontBaseUrl + fileName;
+
                 updateRepository.accept(url, cloudFrontUrl);
+
             } catch (Exception e) {
                 log.error("Failed to process URL: {}", url, e);
             }
         });
     }
+
     private byte[] downloadImageFromTMDB(String imageUrl) throws IOException {
         URL url = new URL(imageUrl);
         try (InputStream inputStream = url.openStream()) {
             return inputStream.readAllBytes();
         }
     }
+
     private String extractFileNameFromUrl(String imageUrl) throws MalformedURLException {
         return Paths.get(new URL(imageUrl).getPath()).getFileName().toString();
     }
+
     private void uploadToS3(String s3Key, byte[] imageBytes) {
         String bucketName = "movie-images-bucket";
         ObjectMetadata metadata = new ObjectMetadata();
