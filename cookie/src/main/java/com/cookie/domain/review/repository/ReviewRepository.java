@@ -18,16 +18,16 @@ import java.util.Optional;
 public interface ReviewRepository extends JpaRepository<Review, Long> {
     Optional<Review> findByUserAndMovie(User user, Movie movie);
 
-    @Query("SELECT r FROM Review r JOIN FETCH r.movie m JOIN FETCH r.user u LEFT JOIN FETCH u.userBadges ub LEFT JOIN FETCH ub.badge WHERE r.isHide = false ORDER BY r.updatedAt DESC")
+    @Query("SELECT r FROM Review r JOIN FETCH r.movie m JOIN FETCH r.user u LEFT JOIN FETCH u.userBadges ub LEFT JOIN FETCH ub.badge WHERE r.isHide = false ORDER BY r.createdAt DESC")
     Page<Review> findAllWithMovieAndUser(Pageable pageable);
 
-    @Query("SELECT r FROM Review r JOIN FETCH r.movie m JOIN FETCH r.user u LEFT JOIN FETCH u.userBadges ub LEFT JOIN FETCH ub.badge b WHERE r.isSpoiler = true AND r.isHide = false ORDER BY r.updatedAt DESC")
+    @Query("SELECT r FROM Review r JOIN FETCH r.movie m JOIN FETCH r.user u LEFT JOIN FETCH u.userBadges ub LEFT JOIN FETCH ub.badge b WHERE r.isSpoiler = true AND r.isHide = false ORDER BY r.createdAt DESC")
     Page<Review> findAllWithMovieAndUserWithSpoilers(Pageable pageable);
 
-    @Query("SELECT r FROM Review r JOIN FETCH r.user u LEFT JOIN FETCH u.userBadges ub LEFT JOIN FETCH ub.badge b WHERE r.movie.id = :movieId AND r.isHide = false")
+    @Query("SELECT r FROM Review r JOIN FETCH r.user u LEFT JOIN FETCH u.userBadges ub LEFT JOIN FETCH ub.badge b WHERE r.movie.id = :movieId AND r.isHide = false ORDER BY r.createdAt DESC")
     Page<Review> findReviewsByMovieId(Long movieId, Pageable pageable);
 
-    @Query("SELECT r FROM Review r JOIN FETCH r.user u LEFT JOIN FETCH u.userBadges ub LEFT JOIN FETCH ub.badge b WHERE r.movie.id = :movieId AND r.isSpoiler = true AND r.isHide = false")
+    @Query("SELECT r FROM Review r JOIN FETCH r.user u LEFT JOIN FETCH u.userBadges ub LEFT JOIN FETCH ub.badge b WHERE r.movie.id = :movieId AND r.isSpoiler = true AND r.isHide = false ORDER BY r.createdAt DESC")
     Page<Review> findSpoilerReviewsByMovieId(Long movieId, Pageable pageable);
   
 
