@@ -11,12 +11,14 @@ import lombok.NoArgsConstructor;
 public class SearchMovieResponse {
     private Long id;
     private String poster;
+    private String title;
 
     public static SearchMovieResponse fromMovie(Movie movie) {
 
         return new SearchMovieResponse(
                 movie.getId(),
-                movie.getPoster()
+                movie.getPoster(),
+                movie.getTitle()
         );
     }
 }
