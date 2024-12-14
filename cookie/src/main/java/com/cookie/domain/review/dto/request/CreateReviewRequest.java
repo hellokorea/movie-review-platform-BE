@@ -15,7 +15,7 @@ public class CreateReviewRequest {
     private long movieId;
     private String content;
     private Integer movieScore;
-    private boolean isSpoiler;
+    private Boolean isSpoiler;
 
     public Review toEntity(User user, Movie movie) {
         return Review.builder()
