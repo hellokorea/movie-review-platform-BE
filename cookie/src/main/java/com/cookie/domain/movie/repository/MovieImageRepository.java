@@ -23,8 +23,13 @@ public interface MovieImageRepository extends JpaRepository<MovieImage, Long> {
     @Query("""
     SELECT mi.url
     FROM MovieImage mi
+    WHERE mi.id IN (
+        SELECT MIN(mi2.id)
+        FROM MovieImage mi2
+        GROUP BY mi2.movie.id)
     """)
-    List<String> findAllTMDBImages();
+    List<String> findFirstImageUrlsPerMovie();
+
 
     @Modifying
     @Query("""
