@@ -110,9 +110,11 @@ public class SecurityConfig {
                                 "/api/movies/{movieId}",
                                 "/api/reviews/{reviewId}",
                                 "/ws/**",
+                                "/actuator/**",
 
                                 "/swagger-ui.html",
-                                "/v3/api-docs"
+                                "/swagger-ui/**",
+                                "/v3/api-docs/**"
                         ).permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/reviews").permitAll() // GET만 허용
                         .requestMatchers("/api/reviews").authenticated() // 다른 메서드는 인증 필요
