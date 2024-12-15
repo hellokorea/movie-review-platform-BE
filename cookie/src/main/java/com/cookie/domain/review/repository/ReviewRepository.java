@@ -31,7 +31,7 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     Page<Review> findSpoilerReviewsByMovieId(Long movieId, Pageable pageable);
   
 
-    @Query("SELECT r FROM Review r JOIN FETCH r.movie WHERE r.user.id = :userId")
+    @Query("SELECT r FROM Review r JOIN FETCH r.movie WHERE r.user.id = :userId ORDER BY r.createdAt DESC")
     List<Review> findAllByUserIdWithMovie(Long userId);
 
     @Query("""
@@ -54,7 +54,7 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     """)
     void deleteByMovieId(@Param("movieId") Long movieId);
 
-    @Query("SELECT r FROM Review r JOIN FETCH r.movie WHERE r.user.id = :userId")
+    @Query("SELECT r FROM Review r JOIN FETCH r.movie WHERE r.user.id = :userId ORDER BY r.createdAt DESC")
     Page<Review> findAllByUserId(Long userId, Pageable pageable);
 
 }
