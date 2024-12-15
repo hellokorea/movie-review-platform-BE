@@ -82,7 +82,7 @@ public class ReviewController {
             @ApiResponse(responseCode = "200", content = @Content(mediaType = "application/json",
                     schema = @Schema(type = "string", example = "SUCCESS")))
     })
-    @PostMapping("/{userId}")
+    @PostMapping
     public ApiSuccess<?> createReview(@AuthenticationPrincipal CustomOAuth2User customOAuth2User, @RequestBody CreateReviewRequest createReviewRequest) {
         Long userId = customOAuth2User.getId();
         reviewService.createReview(userId, createReviewRequest, reviewEmitters, pushNotificationEmitters);
