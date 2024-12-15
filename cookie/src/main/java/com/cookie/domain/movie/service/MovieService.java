@@ -269,7 +269,6 @@ public class MovieService {
 
 
 
-    @Cacheable(value = "categoryMoviesCache" , cacheManager = "categoryMoviesCache")
     public MoviePagenationResponse getMoviesByCategory(String mainCategory, String subCategory, int page, int size) {
         // 1. mainCategory와 subCategory로 Category ID 조회
         Category category = categoryRepository.findByMainCategoryAndSubCategory(
@@ -393,7 +392,6 @@ public class MovieService {
     }
 
 
-   @Cacheable(value = "mainAdminRecommendCache", cacheManager = "mainAdminRecommendCacheManager") // Caffeine Cache 적용
    public List<MovieSimpleResponse> getMainAdminRecommend(){
        List<RecommendResponse> recommendMovies = adminRecommendService.getRecommendMovies();
        List<MovieSimpleResponse> movieSimpleResponses = recommendMovies.stream()
