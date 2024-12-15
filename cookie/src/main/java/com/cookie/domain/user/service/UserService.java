@@ -326,7 +326,12 @@ public class UserService {
 //                .map(FcmToken::getToken)
 //                .toList();
 
-        return new UserResponse(user.getId(), user.getNickname(), user.getProfileImage(), user.getCategory().getId(), null);
+        MatchUp matchUpNow = matchUpRepository.findOneMatchUpByStatus(MatchUpStatus.NOW)
+                .orElse(null);
+
+        Long matchUpId = matchUpNow != null ? matchUpNow.getId() : null;
+
+        return new UserResponse(user.getId(), user.getNickname(), user.getProfileImage(), user.getCategory().getId(), matchUpId);
     }
 
     public void registerAdmin(User user) {
