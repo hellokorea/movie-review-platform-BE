@@ -28,6 +28,8 @@ public interface MatchUpRepository extends JpaRepository<MatchUp, Long> {
 
     List<MatchUp> findByStatus(MatchUpStatus status);
 
+    Optional<MatchUp> findOneMatchUpByStatus(MatchUpStatus status);
+
     List<MatchUp> findTop2ByStatusOrderByEndAtDesc(MatchUpStatus status);
 
 

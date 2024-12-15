@@ -14,4 +14,5 @@ public class UserResponse {
     private String nickname;
     private String profileImage;
     private Long genreId;
+    private Long matchUpId;
 }

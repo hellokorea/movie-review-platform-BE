@@ -4,6 +4,9 @@ import com.cookie.domain.category.repository.CategoryRepository;
 import com.cookie.domain.badge.dto.MyBadgeResponse;
 import com.cookie.domain.badge.repository.BadgeRepository;
 import com.cookie.domain.category.entity.Category;
+import com.cookie.domain.matchup.entity.MatchUp;
+import com.cookie.domain.matchup.entity.enums.MatchUpStatus;
+import com.cookie.domain.matchup.repository.MatchUpRepository;
 import com.cookie.domain.movie.entity.Movie;
 import com.cookie.domain.movie.entity.MovieLike;
 import com.cookie.domain.movie.repository.MovieLikeRepository;
@@ -64,6 +67,8 @@ public class UserService {
     private final FcmTokenRepository fcmTokenRepository;
     private final FcmTokenService fcmTokenService;
     private final RewardHistoryRepository rewardHistoryRepository;
+    private final MatchUpRepository matchUpRepository;
+
 
     @Transactional(readOnly = true)
     public MyPageResponse getMyPage(Long userId) {
@@ -321,7 +326,7 @@ public class UserService {
 //                .map(FcmToken::getToken)
 //                .toList();
 
-        return new UserResponse(user.getId(), user.getNickname(), user.getProfileImage(), user.getCategory().getId());
+        return new UserResponse(user.getId(), user.getNickname(), user.getProfileImage(), user.getCategory().getId(), null);
     }
 
     public void registerAdmin(User user) {
@@ -440,7 +445,12 @@ public class UserService {
 //                .map(FcmToken::getToken)
 //                .toList();
 
-        return new UserResponse(user.getId(), user.getNickname(), user.getProfileImage(), user.getCategory().getId());
+        MatchUp matchUpNow = matchUpRepository.findOneMatchUpByStatus(MatchUpStatus.NOW)
+                .orElse(null);
+
+        Long matchUpId = matchUpNow != null ? matchUpNow.getId() : null;
+
+        return new UserResponse(user.getId(), user.getNickname(), user.getProfileImage(), user.getCategory().getId(), matchUpId);
     }
 
     @Transactional
