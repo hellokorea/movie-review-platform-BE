@@ -252,7 +252,7 @@ public class MovieService {
                 .releasedAt(movie.getReleasedAt())
                 .runtime(movie.getRuntime())
                 .score(movie.getScore())
-                .likes(movieRepository.countLikesByMovieId(movie.getId()))
+                .likes(movie.getMovieLikes())
                 .certification(movie.getCertification())
                 .images(movieImages.stream()
                         .map(MovieImage::getUrl)
