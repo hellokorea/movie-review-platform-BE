@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -29,7 +30,7 @@ public class ChatMessageController {
 
     @MessageMapping("/chat/{matchUpId}/messages") // app/chat/{matchUpId}/messages
     @SendTo("/topic/chat/{matchUpId}")
-    public ChatMessageResponse sendMessage(SimpMessageHeaderAccessor accessor, @DestinationVariable Long matchUpId, ChatMessageRequest chatMessageRequest) {
+    public ChatMessageResponse sendMessage(SimpMessageHeaderAccessor accessor, @DestinationVariable Long matchUpId, @Payload  ChatMessageRequest chatMessageRequest) {
         String userId = (String) Objects.requireNonNull(accessor.getSessionAttributes()).get("User");
         Long senderUserId = Long.parseLong(userId);
         log.info("senderID: {}",userId);
