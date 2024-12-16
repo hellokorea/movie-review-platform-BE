@@ -29,7 +29,13 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
 
     @Query("SELECT r FROM Review r JOIN FETCH r.user u LEFT JOIN FETCH u.userBadges ub LEFT JOIN FETCH ub.badge b WHERE r.movie.id = :movieId AND r.isSpoiler = true AND r.isHide = false ORDER BY r.createdAt DESC")
     Page<Review> findSpoilerReviewsByMovieId(Long movieId, Pageable pageable);
-  
+
+    @Query("SELECT r FROM Review r JOIN FETCH r.user u LEFT JOIN FETCH u.userBadges ub LEFT JOIN FETCH ub.badge b WHERE r.movie.id = :movieId AND r.isHide = false ORDER BY r.reviewLike DESC")
+    Page<Review> findMostLikedReviewsByMovieId(Long movieId, Pageable pageable);
+
+    @Query("SELECT r FROM Review r JOIN FETCH r.user u LEFT JOIN FETCH u.userBadges ub LEFT JOIN FETCH ub.badge b WHERE r.movie.id = :movieId AND r.isSpoiler = true AND r.isHide = false ORDER BY r.reviewLike DESC")
+    Page<Review> findMostLikedSpoilerReviewsByMovieId(Long movieId, Pageable pageable);
+
 
     @Query("SELECT r FROM Review r JOIN FETCH r.movie WHERE r.user.id = :userId ORDER BY r.createdAt DESC")
     List<Review> findAllByUserIdWithMovie(Long userId);

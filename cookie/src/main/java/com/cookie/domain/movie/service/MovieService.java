@@ -171,6 +171,116 @@ public class MovieService {
         );
     }
 
+    @Transactional(readOnly = true)
+    public ReviewOfMovieResponse getMostLikedMovieReviews(Long movieId, Long userId, Pageable pageable) {
+        Movie movie = movieRepository.findById(movieId)
+                .orElseThrow(() -> new IllegalArgumentException("not found movieId: " + movieId));
+
+        log.info("Retrieved movie: movieId = {}", movieId);
+
+        Page<Review> reviewsPage = reviewRepository.findMostLikedReviewsByMovieId(movieId, pageable);
+        log.info("Retrieved {} reviews for movieId = {}", reviewsPage.getContent().size(), movieId);
+
+        List<MovieReviewResponse> reviewResponses = reviewsPage.stream()
+                .map(review -> {
+                    User user = review.getUser();
+                    MovieReviewUserResponse userResponse = new MovieReviewUserResponse(
+                            user.getNickname(),
+                            user.getProfileImage(),
+                            user.getMainBadge() != null ? user.getMainBadge().getBadgeImage() : null,
+                            user.getMainBadge() != null ? user.getMainBadge().getName() : null
+                    );
+
+                    boolean likedByUser = userId != null && reviewLikeRepository.existsByReviewIdAndUserId(review.getId(), userId);
+
+                    return new MovieReviewResponse(
+                            review.getId(),
+                            review.getContent(),
+                            review.getReviewLike(),
+                            review.getMovieScore(),
+                            review.getCreatedAt(),
+                            review.getUpdatedAt(),
+                            userResponse,
+                            likedByUser
+                    );
+                }).toList();
+
+        List<String> subCategories = movieCategoryRepository.findByMovieIdWithCategory(movieId).stream()
+                .map(movieCountry -> movieCountry.getCategory().getSubCategory())
+                .toList();
+
+        log.info("Categories for movieId = {}: {}", movieId, subCategories);
+
+        log.info("Countries for movieId = {}: {}", movieId, movie.getCountry().getName());
+
+        return new ReviewOfMovieResponse(
+                movie.getTitle(),
+                movie.getPoster(),
+                movie.getCertification(),
+                movie.getRuntime(),
+                subCategories,
+                movie.getCountry().getName(),
+                movie.getReleasedAt(),
+                reviewResponses,
+                reviewsPage.getTotalElements(),
+                reviewsPage.getTotalPages()
+        );
+    }
+
+    @Transactional(readOnly = true)
+    public ReviewOfMovieResponse getMostLikedMovieSpoilerReviews(Long movieId, Long userId, Pageable pageable) {
+        Movie movie = movieRepository.findById(movieId)
+                .orElseThrow(() -> new IllegalArgumentException("not found movieId: " + movieId));
+
+        log.info("Retrieved movie: movieId = {}", movieId);
+
+        Page<Review> reviewsPage = reviewRepository.findMostLikedSpoilerReviewsByMovieId(movieId, pageable);
+        log.info("Retrieved {} reviews for movieId = {}", reviewsPage.getContent().size(), movieId);
+
+        List<MovieReviewResponse> reviewResponses = reviewsPage.stream()
+                .map(review -> {
+                    User user = review.getUser();
+                    MovieReviewUserResponse userResponse = new MovieReviewUserResponse(
+                            user.getNickname(),
+                            user.getProfileImage(),
+                            user.getMainBadge() != null ? user.getMainBadge().getBadgeImage() : null,
+                            user.getMainBadge() != null ? user.getMainBadge().getName() : null
+                    );
+
+                    boolean likedByUser = userId != null && reviewLikeRepository.existsByReviewIdAndUserId(review.getId(), userId);
+
+                    return new MovieReviewResponse(
+                            review.getId(),
+                            review.getContent(),
+                            review.getReviewLike(),
+                            review.getMovieScore(),
+                            review.getCreatedAt(),
+                            review.getUpdatedAt(),
+                            userResponse,
+                            likedByUser
+                    );
+                }).toList();
+
+        List<String> subCategories = movieCategoryRepository.findByMovieIdWithCategory(movieId).stream()
+                .map(movieCountry -> movieCountry.getCategory().getSubCategory())
+                .toList();
+
+        log.info("Categories for movieId = {}: {}", movieId, subCategories);
+
+        return new ReviewOfMovieResponse(
+                movie.getTitle(),
+                movie.getPoster(),
+                movie.getCertification(),
+                movie.getRuntime(),
+                subCategories,
+                movie.getCountry().getName(),
+                movie.getReleasedAt(),
+                reviewResponses,
+                reviewsPage.getTotalElements(),
+                reviewsPage.getTotalPages()
+        );
+    }
+
 
     @Transactional(readOnly = true)
     public MoviePagenationResponse getLikedMoviesByUserId(Long userId, int page, int size) {
