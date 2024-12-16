@@ -85,7 +85,11 @@ public class ReviewService {
                 .map(mc -> mc.getCategory().getSubCategory())
                 .toList();
 
-        genres.forEach(genre -> dailyGenreScoreService.saveScore(user, genre, 7, ActionType.MOVIE_LIKE));
+        // 영화 점수에 따라 dailyGenreScore 부여 점수 설정
+        int movieScore = createReviewRequest.getMovieScore();
+        int dailyGenreScore = calculateGenreScore(movieScore);
+
+        genres.forEach(genre -> dailyGenreScoreService.saveScore(user, genre, dailyGenreScore, ActionType.MOVIE_LIKE));
 
         Review review = createReviewRequest.toEntity(user, movie);
         Review savedReview = reviewRepository.save(review); // DB에 저장 된 리뷰
@@ -101,6 +105,21 @@ public class ReviewService {
 
         rewardPointService.updateBadgePointAndBadgeObtain(user, "review", movie.getTitle());
     }
+
+    private int calculateGenreScore(int movieScore) {
+        if (movieScore == 5) {
+            return 8;
+        } else if (movieScore == 4) {
+            return 7;
+        } else if (movieScore == 3) {
+            return 5;
+        } else if (movieScore <= 2) {
+            return 0;
+        } else {
+            return 0; // 기본값
+        }
+    }
+
 
     @Transactional
     public void updateReview(Long reviewId, UpdateReviewRequest updateReviewRequest) {
