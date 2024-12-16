@@ -71,50 +71,7 @@ public class MovieService {
         Page<Review> reviewsPage = reviewRepository.findReviewsByMovieId(movieId, pageable);
         log.info("Retrieved {} reviews for movieId = {}", reviewsPage.getContent().size(), movieId);
 
-        List<MovieReviewResponse> reviewResponses = reviewsPage.stream()
-                .map(review -> {
-                    User user = review.getUser();
-                    MovieReviewUserResponse userResponse = new MovieReviewUserResponse(
-                            user.getNickname(),
-                            user.getProfileImage(),
-                            user.getMainBadge() != null ? user.getMainBadge().getBadgeImage() : null,
-                            user.getMainBadge() != null ? user.getMainBadge().getName() : null
-                    );
-
-                    boolean likedByUser = userId != null && reviewLikeRepository.existsByReviewIdAndUserId(review.getId(), userId);
-
-                    return new MovieReviewResponse(
-                            review.getId(),
-                            review.getContent(),
-                            review.getReviewLike(),
-                            review.getMovieScore(),
-                            review.getCreatedAt(),
-                            review.getUpdatedAt(),
-                            userResponse,
-                            likedByUser
-                    );
-                }).toList();
-
-        List<String> subCategories = movieCategoryRepository.findByMovieIdWithCategory(movieId).stream()
-                .map(movieCountry -> movieCountry.getCategory().getSubCategory())
-                .toList();
-
-        log.info("Categories for movieId = {}: {}", movieId, subCategories);
-
-        log.info("Countries for movieId = {}: {}", movieId, movie.getCountry().getName());
-
-        return new ReviewOfMovieResponse(
-                movie.getTitle(),
-                movie.getPoster(),
-                movie.getCertification(),
-                movie.getRuntime(),
-                subCategories,
-                movie.getCountry().getName(),
-                movie.getReleasedAt(),
-                reviewResponses,
-                reviewsPage.getTotalElements(),
-                reviewsPage.getTotalPages()
-        );
+        return buildReviewOfMovieResponse(movie, reviewsPage, userId);
     }
 
     @Transactional(readOnly = true)
@@ -127,48 +84,7 @@ public class MovieService {
         Page<Review> reviewsPage = reviewRepository.findSpoilerReviewsByMovieId(movieId, pageable);
         log.info("Retrieved {} reviews for movieId = {}", reviewsPage.getContent().size(), movieId);
 
-        List<MovieReviewResponse> reviewResponses = reviewsPage.stream()
-                .map(review -> {
-                    User user = review.getUser();
-                    MovieReviewUserResponse userResponse = new MovieReviewUserResponse(
-                            user.getNickname(),
-                            user.getProfileImage(),
-                            user.getMainBadge() != null ? user.getMainBadge().getBadgeImage() : null,
-                            user.getMainBadge() != null ? user.getMainBadge().getName() : null
-                    );
-
-                    boolean likedByUser = userId != null && reviewLikeRepository.existsByReviewIdAndUserId(review.getId(), userId);
-
-                    return new MovieReviewResponse(
-                            review.getId(),
-                            review.getContent(),
-                            review.getReviewLike(),
-                            review.getMovieScore(),
-                            review.getCreatedAt(),
-                            review.getUpdatedAt(),
-                            userResponse,
-                            likedByUser
-                    );
-                }).toList();
-
-        List<String> subCategories = movieCategoryRepository.findByMovieIdWithCategory(movieId).stream()
-                .map(movieCountry -> movieCountry.getCategory().getSubCategory())
-                .toList();
-
-        log.info("Categories for movieId = {}: {}", movieId, subCategories);
-
-        return new ReviewOfMovieResponse(
-                movie.getTitle(),
-                movie.getPoster(),
-                movie.getCertification(),
-                movie.getRuntime(),
-                subCategories,
-                movie.getCountry().getName(),
-                movie.getReleasedAt(),
-                reviewResponses,
-                reviewsPage.getTotalElements(),
-                reviewsPage.getTotalPages()
-        );
+        return buildReviewOfMovieResponse(movie, reviewsPage, userId);
     }
 
     @Transactional(readOnly = true)
@@ -181,50 +97,7 @@ public class MovieService {
         Page<Review> reviewsPage = reviewRepository.findMostLikedReviewsByMovieId(movieId, pageable);
         log.info("Retrieved {} reviews for movieId = {}", reviewsPage.getContent().size(), movieId);
 
-        List<MovieReviewResponse> reviewResponses = reviewsPage.stream()
-                .map(review -> {
-                    User user = review.getUser();
-                    MovieReviewUserResponse userResponse = new MovieReviewUserResponse(
-                            user.getNickname(),
-                            user.getProfileImage(),
-                            user.getMainBadge() != null ? user.getMainBadge().getBadgeImage() : null,
-                            user.getMainBadge() != null ? user.getMainBadge().getName() : null
-                    );
-
-                    boolean likedByUser = userId != null && reviewLikeRepository.existsByReviewIdAndUserId(review.getId(), userId);
-
-                    return new MovieReviewResponse(
-                            review.getId(),
-                            review.getContent(),
-                            review.getReviewLike(),
-                            review.getMovieScore(),
-                            review.getCreatedAt(),
-                            review.getUpdatedAt(),
-                            userResponse,
-                            likedByUser
-                    );
-                }).toList();
-
-        List<String> subCategories = movieCategoryRepository.findByMovieIdWithCategory(movieId).stream()
-                .map(movieCountry -> movieCountry.getCategory().getSubCategory())
-                .toList();
-
-        log.info("Categories for movieId = {}: {}", movieId, subCategories);
-
-        log.info("Countries for movieId = {}: {}", movieId, movie.getCountry().getName());
-
-        return new ReviewOfMovieResponse(
-                movie.getTitle(),
-                movie.getPoster(),
-                movie.getCertification(),
-                movie.getRuntime(),
-                subCategories,
-                movie.getCountry().getName(),
-                movie.getReleasedAt(),
-                reviewResponses,
-                reviewsPage.getTotalElements(),
-                reviewsPage.getTotalPages()
-        );
+        return buildReviewOfMovieResponse(movie, reviewsPage, userId);
     }
 
     @Transactional(readOnly = true)
@@ -237,6 +110,11 @@ public class MovieService {
         Page<Review> reviewsPage = reviewRepository.findMostLikedSpoilerReviewsByMovieId(movieId, pageable);
         log.info("Retrieved {} reviews for movieId = {}", reviewsPage.getContent().size(), movieId);
 
+        return buildReviewOfMovieResponse(movie, reviewsPage, userId);
+    }
+
+
+    private ReviewOfMovieResponse buildReviewOfMovieResponse(Movie movie, Page<Review> reviewsPage, Long userId) {
         List<MovieReviewResponse> reviewResponses = reviewsPage.stream()
                 .map(review -> {
                     User user = review.getUser();
@@ -261,11 +139,11 @@ public class MovieService {
                     );
                 }).toList();
 
-        List<String> subCategories = movieCategoryRepository.findByMovieIdWithCategory(movieId).stream()
+        List<String> subCategories = movieCategoryRepository.findByMovieIdWithCategory(movie.getId()).stream()
                 .map(movieCountry -> movieCountry.getCategory().getSubCategory())
                 .toList();
 
-        log.info("Categories for movieId = {}: {}", movieId, subCategories);
+        log.info("Categories for movieId = {}: {}", movie.getId(), subCategories);
 
         return new ReviewOfMovieResponse(
                 movie.getTitle(),
@@ -280,7 +158,6 @@ public class MovieService {
                 reviewsPage.getTotalPages()
         );
     }
-
 
     @Transactional(readOnly = true)
     public MoviePagenationResponse getLikedMoviesByUserId(Long userId, int page, int size) {
