@@ -82,7 +82,7 @@ public class UserService {
         List<MyBadgeResponse> badgeDtos = getAllBadgesByUserId(userId);
 
         // 3. 유저의 뱃지 포인트 조회
-        Long myBadgeTotalPoint = rewardHistoryRepository.findTotalBadgePointsByUser(userId);
+        Long myBadgeTotalPoint = badgeAccumulationPointRepository.findPointByUser(userId);
 
         // 4. 유저의 리뷰 조회 (4개)
         List<ReviewResponse> reviewDtos = getReviewsByUserId(userId).stream()

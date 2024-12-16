@@ -12,14 +12,6 @@ import java.util.List;
 public interface RewardHistoryRepository extends JpaRepository<RewardHistory, Long> {
 
     @Query("""
-    SELECT SUM(rh.actionPoint)
-    FROM RewardHistory rh
-    WHERE rh.user.id = :userId
-    """)
-    Long findTotalBadgePointsByUser(@Param("userId") Long userId);
-
-
-    @Query("""
     SELECT rh
     FROM RewardHistory rh
     WHERE rh.user.id = :userId

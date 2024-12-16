@@ -34,7 +34,7 @@ public interface MovieRepository extends JpaRepository<Movie, Long> {
     @Query("""
         SELECT m
         FROM Movie m
-        WHERE m.title LIKE CONCAT('%', :title, '%')
+        WHERE m.title LIKE CONCAT(:title, '%')
     """)
     Page<Movie> findMovieByTitle(@Param("title") String title, Pageable page);
 
