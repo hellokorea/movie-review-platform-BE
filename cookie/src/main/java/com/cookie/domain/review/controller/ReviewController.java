@@ -10,7 +10,6 @@ import com.cookie.domain.review.service.ReviewService;
 import com.cookie.domain.user.dto.response.auth.CustomOAuth2User;
 import com.cookie.global.util.ApiUtil;
 import com.cookie.global.util.ApiUtil.ApiSuccess;
-import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -22,9 +21,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
-
-import java.util.concurrent.CopyOnWriteArrayList;
 
 @Tag(name = "리뷰", description = "리뷰 API")
 @Slf4j
@@ -34,50 +30,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class ReviewController {
     private final ReviewService reviewService;
 
-    private final CopyOnWriteArrayList<SseEmitter> reviewEmitters = new CopyOnWriteArrayList<>();
-    private final CopyOnWriteArrayList<SseEmitter> pushNotificationEmitters = new CopyOnWriteArrayList<>();
-
-
-    // 리뷰 피드 실시간 연결
-    @Hidden
-    @GetMapping("/subscribe/feed")
-    public SseEmitter subscribe() {
-        SseEmitter emitter = getSseEmitter(reviewEmitters);
-        try {
-            emitter.send(SseEmitter.event().name("connected").data("리뷰피드 실시간 연결이 성공적으로 열렸습니다."));
-        } catch (Exception e) {
-            log.error("리뷰피드 연결 오류", e);
-            emitter.completeWithError(e);
-        }
-        return emitter;
-    }
-
-    // 푸시 알림 실시간 연결
-    @Hidden
-    @GetMapping("/subscribe/push-notification")
-    public SseEmitter subscribePushNotification() {
-        log.info("푸시알림 실시간 연결 시작");
-        SseEmitter emitter = getSseEmitter(pushNotificationEmitters);
-        try {
-            emitter.send(SseEmitter.event().name("connected").data("푸시 알림 실시간 연결이 성공적으로 열렸습니다."));
-        } catch (Exception e) {
-            log.error("푸시 알림 연결 오류", e);
-            emitter.completeWithError(e);
-        }
-        return emitter;
-    }
-
-    private SseEmitter getSseEmitter(CopyOnWriteArrayList<SseEmitter> emitters) {
-        SseEmitter emitter = new SseEmitter(Long.MAX_VALUE); // 연결 타임아웃 설정
-        emitters.add(emitter);
-
-        emitter.onCompletion(() -> emitters.remove(emitter));
-        emitter.onTimeout(() -> emitters.remove(emitter));
-        emitter.onError((e) -> emitters.remove(emitter));
-
-        return emitter;
-    }
-
     @Operation(summary = "리뷰 생성", responses = {
             @ApiResponse(responseCode = "200", content = @Content(mediaType = "application/json",
                     schema = @Schema(type = "string", example = "SUCCESS")))
@@ -85,7 +37,7 @@ public class ReviewController {
     @PostMapping
     public ApiSuccess<?> createReview(@AuthenticationPrincipal CustomOAuth2User customOAuth2User, @RequestBody CreateReviewRequest createReviewRequest) {
         Long userId = customOAuth2User.getId();
-        reviewService.createReview(userId, createReviewRequest, reviewEmitters, pushNotificationEmitters);
+        reviewService.createReview(userId, createReviewRequest);
         return ApiUtil.success("SUCCESS");
     }
 

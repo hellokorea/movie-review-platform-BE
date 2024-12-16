@@ -28,7 +28,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("SELECT ft.token FROM User u " +
             "JOIN u.fcmTokens ft " +
             "JOIN u.category c " +
-            "WHERE c.subCategoryEn = :genre " +
+            "WHERE c.subCategory = :genre " +
             "AND u.id != :userId " +
             "AND u.isPushEnabled = true")
     List<String> findTokensByGenreAndExcludeUser(
