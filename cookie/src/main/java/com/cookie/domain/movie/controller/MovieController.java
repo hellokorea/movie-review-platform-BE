@@ -72,6 +72,28 @@ public class MovieController {
 
     }
 
+    @Operation(summary = "영화에 작성 된 리뷰 좋아요순", responses = {
+            @ApiResponse(responseCode = "200", content = @Content(mediaType = "application/json",
+                    schema = @Schema(implementation = ReviewOfMovieResponse.class)))
+    })
+    @GetMapping("{movieId}/reviews/most-liked")
+    public ApiSuccess<?> getMostLikedMovieReviews(@AuthenticationPrincipal CustomOAuth2User customOAuth2User, @PathVariable(name = "movieId") Long movieId, Pageable pageable) {
+        Long userId = (customOAuth2User != null) ? customOAuth2User.getId() : null;
+        ReviewOfMovieResponse movieReviews = movieService.getMostLikedMovieReviews(movieId, userId, pageable);
+        return ApiUtil.success(movieReviews);
+    }
+
+    @Operation(summary = "영화에 작성 된 스포일러 리뷰 좋아요순", responses = {
+            @ApiResponse(responseCode = "200", content = @Content(mediaType = "application/json",
+                    schema = @Schema(implementation = ReviewOfMovieResponse.class)))
+    })
+    @GetMapping("{movieId}/reviews/spoiler/most-liked")
+    public ApiSuccess<?> getMostLikedMovieSpoilerReviews(@AuthenticationPrincipal CustomOAuth2User customOAuth2User, @PathVariable(name = "movieId") Long movieId, Pageable pageable) {
+        Long userId = (customOAuth2User != null) ? customOAuth2User.getId() : null;
+        ReviewOfMovieResponse movieReviews = movieService.getMostLikedMovieSpoilerReviews(movieId, userId, pageable);
+        return ApiUtil.success(movieReviews);
+    }
+
     @Operation(summary = "카테고리로 영화 리스트 조회", responses = {
             @ApiResponse(responseCode = "200", content = @Content(mediaType = "application/json",
                     schema = @Schema(implementation = MoviePagenationResponse.class)))

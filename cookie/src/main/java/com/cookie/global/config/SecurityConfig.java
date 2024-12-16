@@ -98,6 +98,8 @@ public class SecurityConfig {
                                 "/api/reviews/{reviewId}",
                                 "/api/movies/{movieId}/reviews",
                                 "/api/movies/{movieId}/reviews/spoiler",
+                                "/api/movies/{movieId}/reviews/spoiler/most-liked",
+                                "/api/movies/{movieId}/reviews/most-liked",
                                 "/api/admin/movie/base",
                                 "/api/search/**",
                                 "/api/movies/categoryMovies",
