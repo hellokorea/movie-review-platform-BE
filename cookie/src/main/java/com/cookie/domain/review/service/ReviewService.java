@@ -124,8 +124,8 @@ public class ReviewService {
 //            List<String> recipientTokens = userRepository.findTokensByGenreAndExcludeUser(genre, userId);
 
             List<Object[]> results = userRepository.findTokensByGenreAndExcludeUser(genre, userId);
-            Map<String, Long> recipientTokenMap = results.stream()
-                    .collect(Collectors.toMap(result -> (String) result[0], result -> (Long) result[1]));
+            Map<Long, String> recipientTokenMap = results.stream()
+                    .collect(Collectors.toMap(result -> (Long) result[0], result -> (String) result[1]));
 
             log.info("푸시 알림 대상 조회: genre = {}, tokens = {}", genre, recipientTokenMap.keySet());
 

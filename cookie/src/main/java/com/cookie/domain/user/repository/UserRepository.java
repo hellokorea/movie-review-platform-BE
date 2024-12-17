@@ -36,7 +36,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 //            @Param("userId") Long userId
 //    );
 
-    @Query("SELECT ft.token AS token, u.id AS userId FROM User u " +
+    @Query("SELECT u.id AS userId, ft.token AS token FROM User u " +
             "JOIN u.fcmTokens ft " +
             "JOIN u.category c " +
             "WHERE c.subCategory = :genre " +

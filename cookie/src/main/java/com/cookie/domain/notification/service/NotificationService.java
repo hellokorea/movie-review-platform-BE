@@ -41,14 +41,15 @@ public class NotificationService {
      * 푸쉬알림 전송
      */
     @Async
-    public void sendPushNotificationToUsers(Long senderId, Map<String, Long> tokenUserMap, String title, String body, Long reviewId) {
+    public void sendPushNotificationToUsers(Long senderId, Map<Long, String> tokenUserMap, String title, String body, Long reviewId) {
         User sender = userRepository.findById(senderId)
                 .orElseThrow(() -> new IllegalArgumentException("not found userId"));
         String senderProfileImage = sender.getProfileImage();
 
-        for (Map.Entry<String, Long> entry : tokenUserMap.entrySet()) {
-            String token = entry.getKey();
-            Long recipientUserId = entry.getValue();
+        for (Map.Entry<Long, String> entry : tokenUserMap.entrySet()) {
+            Long recipientUserId = entry.getKey();
+            String token = entry.getValue();
+
             log.info("푸쉬알림 수신자 아이디와 토큰: {}, {}", recipientUserId, token);
 
             Message message = Message.builder()
