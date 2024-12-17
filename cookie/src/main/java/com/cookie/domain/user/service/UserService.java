@@ -392,7 +392,7 @@ public class UserService {
                     .movie(movie)
                     .build();
             movieLikeRepository.save(movieLike);
-            movie.increaseLikeCount();
+            movieRepository.increaseLikeCount(movieId);
 
             // DailyGenreScore에 6점 추가
             genres.forEach(genre -> dailyGenreScoreService.saveScore(user, genre, 6, ActionType.MOVIE_LIKE));
