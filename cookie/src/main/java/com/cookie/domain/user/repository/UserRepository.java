@@ -25,16 +25,28 @@ public interface UserRepository extends JpaRepository<User, Long> {
     boolean existsByNickname(String nickname);
     Optional<User> findByNickname(String nickname);
 
-    @Query("SELECT ft.token FROM User u " +
+//    @Query("SELECT ft.token FROM User u " +
+//            "JOIN u.fcmTokens ft " +
+//            "JOIN u.category c " +
+//            "WHERE c.subCategory = :genre " +
+//            "AND u.id != :userId " +
+//            "AND u.isPushEnabled = true")
+//    List<String> findTokensByGenreAndExcludeUser(
+//            @Param("genre") String genre,
+//            @Param("userId") Long userId
+//    );
+
+    @Query("SELECT ft.token AS token, u.id AS userId FROM User u " +
             "JOIN u.fcmTokens ft " +
             "JOIN u.category c " +
             "WHERE c.subCategory = :genre " +
             "AND u.id != :userId " +
             "AND u.isPushEnabled = true")
-    List<String> findTokensByGenreAndExcludeUser(
+    List<Object[]> findTokensByGenreAndExcludeUser(
             @Param("genre") String genre,
             @Param("userId") Long userId
     );
+
 
 
 }

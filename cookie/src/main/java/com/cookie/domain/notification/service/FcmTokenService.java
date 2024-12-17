@@ -43,7 +43,6 @@ public class FcmTokenService {
             fcmTokenRepository.save(fcmToken);
             log.info("Saved fcm token");
 
-            // notificationService.subscribeToTopic(fcmToken.getToken(), user.getCategory().getId(), userId); // 구독 취소
         } else {
             log.info("Push notifications are disabled for userId: {}", userId);
         }
@@ -61,8 +60,6 @@ public class FcmTokenService {
             fcmTokenRepository.delete(fcmToken);
             log.info("Deleted fcm token for userId: {}", userId);
 
-//        notificationService.unsubscribeFromTopic(fcmToken.getToken(), user.getCategory().getId(), userId); // 구독 취소
-//        log.info("Unsubscribe Topic");
         } else {
             log.info("userId:{} 에 삭제 할 FCM 토큰이 존재하지 않습니다.", userId);
         }
