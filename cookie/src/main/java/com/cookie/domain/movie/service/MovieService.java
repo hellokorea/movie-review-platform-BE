@@ -251,6 +251,7 @@ public class MovieService {
                 .reviews(reviews) // 리뷰 리스트 추가
                 .categories(categories)
                 .isLiked(isLiked)
+                .totalReviews(reviewRepository.countByMovieId(movieId))
                 .build();
     }
 
