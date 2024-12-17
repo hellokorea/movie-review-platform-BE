@@ -43,6 +43,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
@@ -120,13 +121,18 @@ public class ReviewService {
 
         // 8. 장르에 맞는 유저들에게 푸시 알림 전송
         for (String genre : genres) {
-            List<String> recipientTokens = userRepository.findTokensByGenreAndExcludeUser(genre, userId);
-            log.info("장르별 푸시 알림 대상 유저의 토큰 목록 조회: genre = {}, recipientTokens = {}", genre, recipientTokens);
+//            List<String> recipientTokens = userRepository.findTokensByGenreAndExcludeUser(genre, userId);
+
+            List<Object[]> results = userRepository.findTokensByGenreAndExcludeUser(genre, userId);
+            Map<String, Long> recipientTokenMap = results.stream()
+                    .collect(Collectors.toMap(result -> (String) result[0], result -> (Long) result[1]));
+
+            log.info("푸시 알림 대상 조회: genre = {}, tokens = {}", genre, recipientTokenMap.keySet());
 
             String title = "Cookie 🍪";
             String body = String.format("%s님이 %s 영화에 리뷰를 등록했어요!.", user.getNickname(), movie.getTitle());
             log.info("푸시 알림 전송: title = {}, body = {}", title, body);
-            notificationService.sendPushNotificationToUsers(userId, recipientTokens, title, body, savedReview.getId());
+            notificationService.sendPushNotificationToUsers(userId, recipientTokenMap, title, body, savedReview.getId());
         }
 
         // 9. 리워드 포인트 및 배지 업데이트
