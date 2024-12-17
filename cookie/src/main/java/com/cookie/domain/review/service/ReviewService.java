@@ -63,48 +63,78 @@ public class ReviewService {
 
     @Transactional
     public void createReview(Long userId, CreateReviewRequest createReviewRequest) {
+        // 1. User 조회
+        log.info("리뷰 작성 요청: userId = {}, movieId = {}", userId, createReviewRequest.getMovieId());
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("not found userId: " + userId));
+                .orElseThrow(() -> {
+                    log.error("사용자 조회 실패: userId = {}", userId);
+                    return new IllegalArgumentException("not found userId: " + userId);
+                });
+        log.info("사용자 조회 성공: userId = {}, nickname = {}", userId, user.getNickname());
 
         Long movieId = createReviewRequest.getMovieId();
-        Movie movie = movieRepository.findById(movieId)
-                .orElseThrow(() -> new IllegalArgumentException("not found movieId: " + movieId));
 
+        // 2. Movie 조회
+        Movie movie = movieRepository.findById(movieId)
+                .orElseThrow(() -> {
+                    log.error("영화 조회 실패: movieId = {}", movieId);
+                    return new IllegalArgumentException("not found movieId: " + movieId);
+                });
+        log.info("영화 조회 성공: movieId = {}, title = {}", movieId, movie.getTitle());
+
+        // 3. 이미 리뷰 작성 여부 확인
         if (reviewRepository.findByUserAndMovie(user, movie).isPresent()) {
+            log.error("중복 리뷰 작성 시도: userId = {}, movieId = {}", userId, movieId);
             throw new IllegalArgumentException("해당 영화에 이미 리뷰를 등록했습니다.");
         }
+        log.info("중복 리뷰 없음: userId = {}, movieId = {}", userId, movieId);
 
-        // 영화 평점이 0.0일 경우 평점 반영
+        // 4. 영화 평점이 0일 경우 평점 반영
         if (movie.getScore() == 0.0) {
+            log.info("영화 평점이 0.0입니다. 평점을 업데이트합니다: movieScore = {}", createReviewRequest.getMovieScore());
             movie.updateScore((double) createReviewRequest.getMovieScore());
         }
 
-        // 해당 영화 장르 목록 조회
+        // 5. 영화 장르 목록 조회
         List<String> genres = movie.getMovieCategories().stream()
                 .filter(mc -> "장르".equals(mc.getCategory().getMainCategory()))
                 .map(mc -> mc.getCategory().getSubCategory())
                 .toList();
+        log.info("영화 장르 목록 조회 완료: genres = {}", genres);
 
-        // 영화 점수에 따라 dailyGenreScore 부여 점수 설정
+        // 6. 영화 점수에 따른 dailyGenreScore 계산 및 저장
         int movieScore = createReviewRequest.getMovieScore();
         int dailyGenreScore = calculateGenreScore(movieScore);
+        log.info("영화 점수에 따른 dailyGenreScore 계산 완료: movieScore = {}, dailyGenreScore = {}", movieScore, dailyGenreScore);
 
-        genres.forEach(genre -> dailyGenreScoreService.saveScore(user, genre, dailyGenreScore, ActionType.MOVIE_LIKE));
+        genres.forEach(genre -> {
+            log.info("장르별 dailyGenreScore 저장: genre = {}, dailyGenreScore = {}", genre, dailyGenreScore);
+            dailyGenreScoreService.saveScore(user, genre, dailyGenreScore, ActionType.MOVIE_LIKE);
+        });
 
+        // 7. 리뷰 저장
         Review review = createReviewRequest.toEntity(user, movie);
-        Review savedReview = reviewRepository.save(review); // DB에 저장 된 리뷰
+        log.info("리뷰 엔티티 생성 완료: review = {}", review);
+        Review savedReview = reviewRepository.save(review);
+        log.info("리뷰 저장 완료: savedReviewId = {}", savedReview.getId());
 
-        // 영화 장르 목록 순회하면서 해당 장르를 좋아하는 유저의 토큰 불러와서 푸쉬알림 전송하기
+        // 8. 장르에 맞는 유저들에게 푸시 알림 전송
         for (String genre : genres) {
-            List<String> recipientTokens = userRepository.findTokensByGenreAndExcludeUser(genre, userId); // 알림을 받는 사람들의 토큰 목록 (작성자 제외)
+            List<String> recipientTokens = userRepository.findTokensByGenreAndExcludeUser(genre, userId);
+            log.info("장르별 푸시 알림 대상 유저의 토큰 목록 조회: genre = {}, recipientTokens = {}", genre, recipientTokens);
 
-            String title ="Cookie 🍪";
-            String body = String.format("%s님이 %s 영화에 리뷰를 등록했어요!.", user.getNickname(), movie.getTitle()); // 리뷰 작성자 닉네임, 영화 제목
+            String title = "Cookie 🍪";
+            String body = String.format("%s님이 %s 영화에 리뷰를 등록했어요!.", user.getNickname(), movie.getTitle());
+            log.info("푸시 알림 전송: title = {}, body = {}", title, body);
             notificationService.sendPushNotificationToUsers(userId, recipientTokens, title, body, savedReview.getId());
         }
 
+        // 9. 리워드 포인트 및 배지 업데이트
+        log.info("리워드 포인트 및 배지 업데이트 시작: userId = {}, movieTitle = {}", userId, movie.getTitle());
         rewardPointService.updateBadgePointAndBadgeObtain(user, "review", movie.getTitle());
+        log.info("리워드 포인트 및 배지 업데이트 완료: userId = {}", userId);
     }
+
 
     private int calculateGenreScore(int movieScore) {
         if (movieScore == 5) {
