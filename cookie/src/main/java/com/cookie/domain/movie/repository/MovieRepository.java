@@ -103,5 +103,9 @@ public interface MovieRepository extends JpaRepository<Movie, Long> {
     WHERE m.poster = :TmdbBUrl
     """)
     void updateImageByFileName(@Param("TmdbBUrl") String TmdbBUrl, @Param("cloudFrontUrl") String cloudFrontUrl);
+
+    @Modifying
+    @Query("UPDATE Movie m SET m.movieLikes = m.movieLikes + 1 WHERE m.id = :movieId")
+    void increaseLikeCount(@Param("movieId") Long movieId);
 }
 

@@ -275,7 +275,7 @@ public class MovieService {
                         .poster(movie.getPoster()) // 포스터 URL
                         .releasedAt(movie.getReleasedAt()) // 출시일
                         .country(movie.getCountry().getName()) // 국가
-                        .likes(movieRepository.countLikesByMovieId(movie.getId())) // 좋아요 수
+                        .likes(movie.getMovieLikes()) // 좋아요 수
                         .reviews((long) (movie.getReviews() != null ? movie.getReviews().size() : 0)) // 리뷰 수
                         .build())
                 .collect(Collectors.toList());
