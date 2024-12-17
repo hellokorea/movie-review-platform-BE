@@ -2,14 +2,11 @@ package com.cookie.domain.review.service;
 
 
 import com.cookie.domain.movie.dto.response.ReviewMovieResponse;
-import com.cookie.domain.movie.dto.response.ReviewOfMovieResponse;
 import com.cookie.domain.movie.entity.Movie;
 import com.cookie.domain.movie.repository.MovieRepository;
-import com.cookie.domain.notification.entity.FcmToken;
 import com.cookie.domain.notification.service.NotificationService;
 import com.cookie.domain.review.dto.request.ReviewCommentRequest;
 import com.cookie.domain.review.dto.request.CreateReviewRequest;
-import com.cookie.domain.review.dto.response.PushNotification;
 import com.cookie.domain.review.dto.response.ReviewCommentResponse;
 import com.cookie.domain.review.dto.response.ReviewDetailResponse;
 import com.cookie.domain.review.dto.response.ReviewListResponse;
@@ -25,27 +22,21 @@ import com.cookie.domain.review.repository.ReviewRepository;
 import com.cookie.domain.reward.service.RewardPointService;
 import com.cookie.domain.user.dto.response.CommentUserResponse;
 import com.cookie.domain.user.dto.response.ReviewUserResponse;
-import com.cookie.domain.user.entity.DailyGenreScore;
 import com.cookie.domain.user.entity.User;
 import com.cookie.domain.user.entity.enums.ActionType;
 import com.cookie.domain.user.repository.DailyGenreScoreRepository;
 import com.cookie.domain.user.repository.UserRepository;
 import com.cookie.domain.user.service.DailyGenreScoreService;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -63,7 +54,7 @@ public class ReviewService {
     private final RewardPointService rewardPointService;
 
     @Transactional
-    public void createReview(Long userId, CreateReviewRequest createReviewRequest) {
+    public CreateReviewResponse createReview(Long userId, CreateReviewRequest createReviewRequest) {
         // 1. User 조회
         log.info("리뷰 작성 요청: userId = {}, movieId = {}", userId, createReviewRequest.getMovieId());
         User user = userRepository.findById(userId)
@@ -139,6 +130,8 @@ public class ReviewService {
         log.info("리워드 포인트 및 배지 업데이트 시작: userId = {}, movieTitle = {}", userId, movie.getTitle());
         rewardPointService.updateBadgePointAndBadgeObtain(user, "review", movie.getTitle());
         log.info("리워드 포인트 및 배지 업데이트 완료: userId = {}", userId);
+
+        return new CreateReviewResponse(savedReview.getId());
     }
 
 
