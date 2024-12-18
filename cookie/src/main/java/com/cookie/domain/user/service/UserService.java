@@ -237,7 +237,7 @@ public class UserService {
     }
 
     @Transactional
-    public void updateMyProfile(Long userId, MultipartFile profileImage, String nickname, String mainBadgeIdStr, String genreIdStr) {
+    public void updateMyProfile(Long userId, MultipartFile profileImage, String nickname, String mainBadgeIdStr, String genreIdStr, String profileImageUrl) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("not found user: " + userId));
 
@@ -252,12 +252,7 @@ public class UserService {
             }
         }
 
-        String profileImageUrl = user.getProfileImage();
-        if (profileImage != null && !profileImage.isEmpty()) { // profile null 이 아닐 경우
-            profileImageUrl = awss3Service.uploadImage(profileImage);
-        } else if (profileImage == null || profileImage.isEmpty()) {
-            profileImageUrl = "https://uplus-bucket.s3.ap-northeast-2.amazonaws.com/6bc46d8d-b_default.jpeg";
-        }
+        String profile = processProfileImage(profileImage, profileImageUrl);
 
         List<UserBadge> userBadges = userBadgeRepository.findAllByUserId(userId);
         log.info("user badge list: {}", userBadges == null ? 0 : userBadges.size());
@@ -282,27 +277,26 @@ public class UserService {
         Category genre = categoryRepository.findById(genreId)
                 .orElseThrow(() -> new IllegalArgumentException("not found genre: " + genreId));
 
-        user.updateProfile(profileImageUrl, nickname.trim(), genre);
+        user.updateProfile(profile, nickname.trim(), genre);
         userRepository.save(user);
 
         if (userBadges != null && !userBadges.isEmpty()) {
             userBadgeRepository.saveAll(userBadges);
         }
 
-        // 선호 장르 변경시, 기존 토픽 구독 취소 및 업데이트
-//        if (!prevGenreId.equals(genre.getId())) {
-//            if (fcmToken != null && !fcmToken.isEmpty()) {
-//                notificationService.unsubscribeFromTopic(fcmToken, prevGenreId, userId);
-//                log.info("Unsubscribed from previous genre: {}", prevGenreId);
-//            }
-//            notificationService.subscribeToTopic(fcmToken, genreId, userId);
-//            log.info("Subscribed to new genre: {}", genreId);
-//        } else {
-//            log.warn("FCM token is null or empty. Skipping subscription update.");
-//        }
-
         log.info("Updated user info");
     }
+
+    private String processProfileImage(MultipartFile profileImage, String profileImageUrl) {
+        if (profileImage != null && !profileImage.isEmpty()) {
+            return awss3Service.uploadImage(profileImage);
+        }
+        if (profileImageUrl != null && !profileImageUrl.isEmpty()) {
+            return profileImageUrl;
+        }
+        return "https://uplus-bucket.s3.ap-northeast-2.amazonaws.com/6bc46d8d-b_default.jpeg";
+    }
+
 
     public BadgeAccResponse getBadgeAccumulationPoint(Long userId) {
         // BadgeAccumulationPoint 데이터를 가져옴

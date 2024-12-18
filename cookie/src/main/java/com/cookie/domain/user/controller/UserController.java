@@ -113,9 +113,10 @@ public class UserController {
                                          @RequestPart(value = "profileImage", required = false) MultipartFile profileImage,
                                          @RequestPart(value = "nickname") String nickname,
                                          @RequestPart(value = "mainBadgeId", required = false) String mainBadgeId,
-                                         @RequestPart(value = "genreId") String genreIdStr) {
+                                         @RequestPart(value = "genreId") String genreIdStr,
+                                         @RequestPart(value = "profileImageUrl", required = false) String profileImageUrl) {
         Long userId = customOAuth2User.getId();
-        userService.updateMyProfile(userId, profileImage, nickname, mainBadgeId, genreIdStr);
+        userService.updateMyProfile(userId, profileImage, nickname, mainBadgeId, genreIdStr, profileImageUrl);
         return ApiUtil.success("SUCCESS");
     }
 
