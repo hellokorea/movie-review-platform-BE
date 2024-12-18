@@ -135,7 +135,8 @@ public class MovieService {
                             review.getCreatedAt(),
                             review.getUpdatedAt(),
                             userResponse,
-                            likedByUser
+                            likedByUser,
+                            review.isSpoiler()
                     );
                 }).toList();
 
