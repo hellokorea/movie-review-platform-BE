@@ -27,22 +27,22 @@ public class FcmTokenService {
 
         // 사용자가 알림을 활성화한 경우에만 토큰 저장
         if (user.isPushEnabled()) {
-
-            // 동일한 토큰이 이미 존재하면 저장하지 않고 종료
-            if (fcmTokenRepository.existsByTokenAndUser(token, user)) {
-                log.info("이미 동일한 토큰 {}이 {}에 존재하여 저장하지 않습니다.", token, userId);
-                return;
+            // 해당 유저에 토큰이 이미 존재하면 업데이트
+            Optional<FcmToken> existingFcmToken = fcmTokenRepository.findByUser(user);
+            if (existingFcmToken.isPresent()) {
+                FcmToken fcmToken = existingFcmToken.get();
+                fcmToken.update(token);
+                fcmTokenRepository.save(fcmToken);
+                log.info("FCM 토큰 업데이트 완료: userId = {}, newToken = {}", userId, token);
+            } else {
+                // 존재하지 않으면 새로운 토큰 저장
+                FcmToken fcmToken = FcmToken.builder()
+                        .token(token)
+                        .user(user)
+                        .build();
+                fcmTokenRepository.save(fcmToken);
+                log.info("새로운 FCM 토큰 저장: userId = {}, token = {}", userId, token);
             }
-
-            // 동일한 토큰이 존재하지 않으면 토큰 저장
-            FcmToken fcmToken = FcmToken.builder()
-                    .token(token)
-                    .user(user)
-                    .build();
-
-            fcmTokenRepository.save(fcmToken);
-            log.info("Saved fcm token");
-
         } else {
             log.info("Push notifications are disabled for userId: {}", userId);
         }
