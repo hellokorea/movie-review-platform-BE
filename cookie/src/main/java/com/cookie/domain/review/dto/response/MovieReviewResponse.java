@@ -19,5 +19,6 @@ public class MovieReviewResponse {
     private LocalDateTime updatedAt;
     private MovieReviewUserResponse user;
     private boolean likedByUser;
+    private boolean spoiler;
 
 }

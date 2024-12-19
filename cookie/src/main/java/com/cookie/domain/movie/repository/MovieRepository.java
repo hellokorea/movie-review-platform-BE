@@ -34,7 +34,7 @@ public interface MovieRepository extends JpaRepository<Movie, Long> {
     @Query("""
         SELECT m
         FROM Movie m
-        WHERE m.title LIKE CONCAT('%', :title, '%')
+        WHERE m.title LIKE CONCAT(:title, '%')
     """)
     Page<Movie> findMovieByTitle(@Param("title") String title, Pageable page);
 
@@ -103,5 +103,9 @@ public interface MovieRepository extends JpaRepository<Movie, Long> {
     WHERE m.poster = :TmdbBUrl
     """)
     void updateImageByFileName(@Param("TmdbBUrl") String TmdbBUrl, @Param("cloudFrontUrl") String cloudFrontUrl);
+
+    @Modifying
+    @Query("UPDATE Movie m SET m.movieLikes = m.movieLikes + 1 WHERE m.id = :movieId")
+    void increaseLikeCount(@Param("movieId") Long movieId);
 }
 

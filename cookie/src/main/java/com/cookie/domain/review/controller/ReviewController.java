@@ -4,6 +4,7 @@ package com.cookie.domain.review.controller;
 import com.cookie.domain.review.dto.request.CreateReviewRequest;
 import com.cookie.domain.review.dto.request.ReviewCommentRequest;
 import com.cookie.domain.review.dto.request.UpdateReviewRequest;
+import com.cookie.domain.review.dto.response.CreateReviewResponse;
 import com.cookie.domain.review.dto.response.ReviewDetailResponse;
 import com.cookie.domain.review.dto.response.ReviewListResponse;
 import com.cookie.domain.review.service.ReviewService;
@@ -37,8 +38,8 @@ public class ReviewController {
     @PostMapping
     public ApiSuccess<?> createReview(@AuthenticationPrincipal CustomOAuth2User customOAuth2User, @RequestBody CreateReviewRequest createReviewRequest) {
         Long userId = customOAuth2User.getId();
-        reviewService.createReview(userId, createReviewRequest);
-        return ApiUtil.success("SUCCESS");
+        CreateReviewResponse createReviewResponse = reviewService.createReview(userId, createReviewRequest);
+        return ApiUtil.success(createReviewResponse);
     }
 
     @Operation(summary = "리뷰 수정",

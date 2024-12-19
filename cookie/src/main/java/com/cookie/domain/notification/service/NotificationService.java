@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Slf4j
@@ -40,17 +41,16 @@ public class NotificationService {
      * 푸쉬알림 전송
      */
     @Async
-    public void sendPushNotificationToUsers(Long senderId, List<String> tokens, String title, String body, Long reviewId) {
+    public void sendPushNotificationToUsers(Long senderId, Map<Long, String> tokenUserMap, String title, String body, Long reviewId) {
         User sender = userRepository.findById(senderId)
                 .orElseThrow(() -> new IllegalArgumentException("not found userId"));
         String senderProfileImage = sender.getProfileImage();
 
-        for (String token : tokens) {
+        for (Map.Entry<Long, String> entry : tokenUserMap.entrySet()) {
+            Long recipientUserId = entry.getKey();
+            String token = entry.getValue();
 
-            FcmToken fcmToken = fcmTokenRepository.findByToken(token)
-                    .orElseThrow(() -> new IllegalArgumentException("not found token"));
-            Long userId = fcmToken.getUser().getId(); // 받는 사람 id
-
+            log.info("푸쉬알림 수신자 아이디와 토큰: {}, {}", recipientUserId, token);
 
             Message message = Message.builder()
                     .setWebpushConfig(WebpushConfig.builder()
@@ -64,13 +64,12 @@ public class NotificationService {
             try {
                 firebaseMessaging.send(message); // 푸쉬 알림 전송
                 log.info("푸쉬 알림 전송 성공: token {}", token);
-                saveUserNotificationToRedis(userId, body, senderProfileImage, reviewId); // 알림 저장
+                saveUserNotificationToRedis(recipientUserId, body, senderProfileImage, reviewId);
             } catch (FirebaseMessagingException e) {
                 log.error("푸쉬 알림 전송 실패: token {}, error: {}", token, e.getMessage());
             }
         }
     }
-
 
     /*
      * 사용자 별 알림 리스트 조회

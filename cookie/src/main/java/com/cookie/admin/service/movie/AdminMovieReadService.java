@@ -87,14 +87,12 @@ public class AdminMovieReadService {
                         .build())
                 .toList();
 
-        String imageUrl = "https://image.tmdb.org/t/p/w500/";
-
         return AdminMovieDetailResponse.builder()
                 .movieId(movieId)
                 .title(movie.getTitle())
                 .director(movieDirector)
                 .runtime(movie.getRuntime())
-                .posterPath(imageUrl + movie.getPoster())
+                .posterPath(movie.getPoster())
                 .releaseDate(movie.getReleasedAt())
                 .certification(movie.getCertification())
                 .country(movie.getCountry().getName())

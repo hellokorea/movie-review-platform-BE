@@ -33,5 +33,6 @@ public class MovieResponse {
     private List<ReviewResponse> reviews;
     private List<CategoryResponse> categories;
     private boolean isLiked;
+    private Long totalReviews;
 
 }
