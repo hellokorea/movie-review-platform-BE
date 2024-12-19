@@ -131,7 +131,7 @@
 
 |                                      개체-관계 모델(ERD)                                       |
 | :-------------------------------------------------------------------------------------------: |
-| <img src="https://github.com/user-attachments/assets/3aa8d8e1-77f0-42bb-b4cd-536efa3ed573" width="700px" /> |
+| <img src="https://github.com/user-attachments/assets/b7eb6678-62ff-42db-a2ab-e33f04f399eb" width="700px" /> |
 
 
 <br />
