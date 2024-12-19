@@ -227,7 +227,8 @@ public class ReviewService {
                         new CommentUserResponse(
                                 comment.getUser().getId(),
                                 comment.getUser().getNickname(),
-                                comment.getUser().getProfileImage()),
+                                comment.getUser().getProfileImage(),
+                                comment.getUser().getMainBadge() != null ? review.getUser().getMainBadge().getBadgeImage() : null),
                         comment.getCreatedAt(),
                         comment.getComment()))
                 .toList();
