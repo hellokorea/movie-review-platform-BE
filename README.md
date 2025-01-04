@@ -146,32 +146,32 @@
   <tr>
     <td align="center">
       <a href="https://github.com/hellokorea" target="_blank">
-        김정동<br />(Back-end   & 팀장)
+        김정동<br />(BE & 팀장)
       </a>
     </td>
     <td align="center">
       <a href="https://github.com/fbgjung" target="_blank">
-        류금정<br />(Back-end)
+        류금정<br />(BE)
       </a>
     </td>
     <td align="center">
       <a href="https://github.com/yujinn-Jung" target="_blank">
-        정유진<br />(Back-end)
+        정유진<br />(BE)
       </a>
     </td>
     <td align="center">
       <a href="https://github.com/ghpark7" target="_blank">
-        박건휘<br />(Front-end & 부팀장)
+        박건휘<br />(FE & 부팀장)
       </a>
     </td>
     <td align="center">
       <a href="https://github.com/Eu1j1n" target="_blank">
-        김의진<br />(Front-end)
+        김의진<br />(FE)
       </a>
     </td>
     <td align="center">
       <a href="https://github.com/ummfieg">
-        임가인<br />(Front-end)
+        임가인<br />(FE)
       </a>
     </td>
   </tr>
