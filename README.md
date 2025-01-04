@@ -146,7 +146,7 @@
   <tr>
     <td align="center">
       <a href="https://github.com/hellokorea" target="_blank">
-        김정동<br />(Back-end&팀장)
+        김정동<br />(Back-end   & 팀장)
       </a>
     </td>
     <td align="center">
