@@ -13,11 +13,10 @@
 1. [**기술 스택**](#3)
 1. [**주요 기능**](#4)
 1. [**프로젝트 구성도**](#5)
-1. [**데모 영상**](#6)
-1. [**구글 애널리틱스 통계**](#7)
-1. [**개발 팀 소개**](#8)
-1. [**개발 기간 및 일정**](#9)
-1. [**실행 방법**](#10)
+1. [**구글 애널리틱스 통계**](#6)
+1. [**개발 팀 소개**](#7)
+1. [**개발 기간 및 일정**](#8)
+1. [**실행 방법**](#9)
 
 <br />
 
@@ -35,13 +34,13 @@
 
 <br />
 
+[**🔗 시연 영상**](https://youtu.be/hKdqe6Mb81E) 🎬
 
-[**🔗 배포된 웹 서비스로 바로가기 Click !**](https://www.cookiekie.com/) 👈
+[**🔗 배포된 웹 서비스**](https://www.cookiekie.com/) 👈
 
-[**🔗 프론트엔드 저장소 바로가기 Click !**](https://github.com/URECA-Cookie/Cookie-FE) 👈
+[**🔗 FE Repository**](https://github.com/URECA-Cookie/Cookie-FE) 📥
 
-[**🔗 백엔드 저장소 바로가기 Click !**](https://github.com/URECA-Cookie/Cookie-BE) 👈
-
+[**🔗 BE Repository**](https://github.com/URECA-Cookie/Cookie-BE) 📥
 
 
 <br />
@@ -52,60 +51,23 @@
 
 |   버전    | <div align="center">업데이트 내용</div>                                                  | 업데이트 날짜 |
 | :-------: | :--------------------------------------------------------------------------------------  | :-----------: |                                                                                                                   
-| `v1.0.0`  | 서비스 오픈<br/>- 영화,배우,감독 정보 보기<br/>- 리뷰 시스템 <br/>- 매치업 콘텐츠<br/>- 리워드 시스템<br/>- 알림기능            |   24.12.11.   |
+| `v1.0.0`  | 서비스 오픈<br/>- 영화,배우,감독 정보 보기<br/>- 리뷰 시스템 <br/>- 매치업 콘텐츠<br/>- 리워드 시스템<br/>- 알림기능            |   24.12.11   |
+| `v1.1.0`  | Hot Fix<br/>- UI/UX 리팩토링<br/>- 매치 업 채팅 스크롤 수정 <br/>- 모니터링 추가 |   24.12.15   |
+| `v1.2.0`  | 피드백 반영<br/>- 매치 업 팝업 모달 추가<br/>- Push 알림 기능 수정<br/>- 리뷰 버그 수정 |   24.12.20   |
+
+
+<br />
+
+<div id="2"></div>
+
+## 🛠 기술 스택
+<img width="1152" alt="스크린샷 2025-01-04 19 30 39" src="https://github.com/user-attachments/assets/cced271d-21e3-4d4a-b428-e484df696a87" />
+
 
 <br />
 
 <div id="3"></div>
 
-## 🛠 기술 스택
-
-### **Git**
-
-| <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSbqj9Ii13d6hx5a9kyLnC5A8A96LDSaSZv_w&s" alt="GitHub" width="50px" height="50px" /> | <img src="https://blog.kakaocdn.net/dn/dExbK3/btqD3I24Vm7/klw5iK8Dbpb7gRZAmeENwk/img.png" alt="GitHub Actions" width="50px" height="50px" /> | 
-| :----------------------------------------------------------------------------------------------------------------------------: | :--------------------------------------------------------------------------------------------------------------------------: |
-|                                                             GitHub                                                              |                                                             GitHub Actions                                                             | 
-
-### **Infra**
-
-| <img src="https://profilinator.rishav.dev/skills-assets/nginx-original.svg" alt="NGiNX" width="50px" height="50px" /> | <img src="https://img1.daumcdn.net/thumb/R800x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2Fd6b6j3%2FbtqZKz4BSqb%2FC72guCneUd77j3ByMQ0cx1%2Fimg.png" alt="S3" width="50px" height="50px" /> | <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSR5E4AqT27j3Noy8hTrPcyZI6bI48CFG52fA&s" alt="RDS" width="50px" height="50px" /> | <img src="https://velog.velcdn.com/images/songsunkook/post/795c3ba7-c5c0-4cca-a266-c8d04f4aaf71/image.png" alt="docker" width="50px" height="50px" /> | <img src="https://velog.velcdn.com/images%2Fdoohyunlm%2Fpost%2Fa56b330e-b75c-4c66-9610-bedc0601b716%2FCloudFront%20%EA%B0%9C%EB%85%90.png" alt="amazon cloudFront" width="50px" height="50px" /> |<img src="https://blog.kakaocdn.net/dn/cvVmo3/btsitAjDCkE/n6triDTBqRHsKJBX8q9xK0/img.png" alt="bucket" width="50px" height="50px" /> |
-| :----------------------------------------------------------------------------------------------------------------------------: | :--------------------------------------------------------------------------------------------------------------------------: | :--------------------------------------------------------------------------------------------------------------------------------------------------: | :----------------------------------------------------------------------------------------------------------------------------------------------: |:--------------------------------------------------------------------------------------------------------------------------------------------------: |:--------------------------------------------------------------------------------------------------------------------------------------------------: 
-|                                                             NGINX                                                              |                                                             S3                                                             |                                                                      RDS                                                                     |                          
-
-### **API**
-
-| <img src="https://play-lh.googleusercontent.com/VgyD9nxsxISYNjNdGMq3ClUVLrKoMSWdwNHHqGSfFaiR4HMaPf6zOvqQfaD6eQ8P3x4=w240-h480-rw" alt="TMDB" width="50px" height="50px" /> | <img src="https://firebase.google.com/static/images/brand-guidelines/logo-vertical.png?hl=ko" alt="firebase" width="50px" height="50px" /> | <img src="https://miro.medium.com/v2/resize:fit:1400/1*-ExxDAPl4rciaENKd8QSBw.png" alt="google analytics" width="50px" height="50px" /> | 
-| :----------------------------------------------------------------------------------------------------------------------------: | :--------------------------------------------------------------------------------------------------------------------------: | :--------------------------------------------------------------------------------------------------------------------------------------------------: 
-|                                                             TMDB                                                              |                                                             firebase                                                             |                                                                      google analytics                                                                      | 
- 
-### **Front-end**
-
-| <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSLPLQGezkpT1ntM2T0k3TR0yY75wevMpjLKA&s" alt="React" width="50px" height="50px" /> | <img src="https://blog.kakaocdn.net/dn/d7HqU3/btskLMUTVZ9/9rvgQ9kwoMeWqck92ak1tK/img.png" alt="React Router" width="50px" height="50px" /> | <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5ZNo0O1ycZvM8fq7MFyxCAW7J6ZPG39bYPw&s" alt="Vite React" width="50px" height="50px" /> | <img src="https://velog.velcdn.com/images/ony_/post/89a6bebd-c2ef-4f35-9072-5e8c4689ed38/image.png" alt="Zustand" width="50px" height="50px" /> | <img src="https://velog.velcdn.com/images/iberis/post/0d5e518a-f8d7-44f4-a884-de0bba2826a3/image.png" alt="styoled component" width="50px" height="50px" /> | <img src="https://e7.pngegg.com/pngimages/518/938/png-clipart-eslint-logo-tech-companies.png" alt="ESLint" width="50px" height="50px" /> |<img src="https://tsh.io/wp-content/uploads/fly-images/32664/framer-motion-logo-1-312x211.png" alt="framer motion" width="50px" height="50px" /> |<img src="https://cdn.icon-icons.com/icons2/2699/PNG/512/socketio_logo_icon_168806.png" alt="socket io" width="50px" height="50px" /> |
-| :----------------------------------------------------------------------------------------------------------------------------: | :--------------------------------------------------------------------------------------------------------------------------: | :--------------------------------------------------------------------------------------------------------------------------------------------------: | :----------------------------------------------------------------------------------------------------------------------------------------------: |:----------------------------------------------------------------------------------------------------------------------------------------------: |:----------------------------------------------------------------------------------------------------------------------------------------------: |:----------------------------------------------------------------------------------------------------------------------------------------------: |:----------------------------------------------------------------------------------------------------------------------------------------------: |
-|                                                             React                                                              |                                                             React Router                                                             |                                                                      Vite React                                                                      |                                                                         Zustand                                                                  | Styled Componet | ESLint | framer motion | socket io|
-
-### **Back-end**
-
- | <img src="https://www.seekpng.com/png/full/8-80775_spring-logo-png-transparent-spring-java.png" alt="Spring-Boot" width="50px" height="50px" /> | <img src="https://devocean.sk.com/thumnail/2024/9/10/31393040a5961489ffe09f8f0c7f2f6ced61fce87042ad84b267626d6a8b790a.png" alt="Spring Batch" width="50px" height="50px" /> | <img src="https://blog.kakaocdn.net/dn/bFOE63/btsIzp94PWK/EKxaJyn3sgy99SWbNY5quk/img.png" alt="Spring Security" width="50px" height="50px" /> | <img src="https://velog.velcdn.com/images/bsh5659/post/92345ae8-97e7-442f-ba7c-b10a594f7b70/image.png" alt="Spring WebClient" width="50px" height="50px"/> | <img src="https://velog.velcdn.com/images/yuureru/post/c1247051-10fc-41f1-a8f8-faf661422064/image.jpg" alt="oauth2" width="50px" height="50px"/> |<img src="https://images.velog.io/images/jennyfromdeblock/post/60ef77cd-8c7a-4f65-8b55-6b2f121e7f6f/jwt.png" alt="jwt" width="50px" height="50px"/> |<img src="https://miro.medium.com/v2/resize:fit:854/1*QR_zc6t4O2Mq7Nfkh47HPQ.png" alt="stomp" width="50px" height="50px"/> |
- | :---------------------------------------------------------------------------------------------------------------------------------------------: | :------------------------------------------------------------------------------------------------------------------------------------------------------------------: | :----------------------------------------------------------------------------------------------------------------------------: | :---------------------------------------------------------------------------------------------------------------------------------------------: | :---------------------------------------------------------------------------------------------------------------------------------------------: |:---------------------------------------------------------------------------------------------------------------------------------------------: |:---------------------------------------------------------------------------------------------------------------------------------------------: |
-|                                                                   Spring-Boot                                                                   |                                                                              Spring Batch                                                                               |                                                             Spring Security                                                              |                                                                         Spring WebClient                                                                     |                                                                         Oauth2                                                                 | JWT | stomp |
-
-
-### **Monitoring**
-
-| <img src="https://velog.velcdn.com/images/hyunshoon/post/930b72e7-ac67-41eb-a719-cd5cbf378d99/image.png" alt="prometheus" width="50px" height="50px" /> | <img src="https://w1.pngwing.com/pngs/950/813/png-transparent-github-logo-grafana-influxdb-dashboard-visualization-web-application-installation-data-plugin-thumbnail.png" alt="grafana" width="50px" height="50px" /> | 
-| :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | :-------------------------------------------------------------------------------------------------------------------------: |
-|                                                                                               prometheus                                                                                                |                                                           Grafana                                                           | 
-
-### **Data Source**
-
-| <img src="https://i.namu.wiki/i/vkGpBcmks1_NcJW0HUFa6jlwlM6h11B-8nxRRX4bYC703H4nLo7j4dQdRCC32gz8Q-BqRcAnQgFSXMjB8jPohg.svg" alt="MySQL" width="50px" height="50px" /> | <img src="https://blog.kakaocdn.net/dn/xAjGD/btqV8FTCugH/aNgvOTO4t2N55JpZuiI9Ak/img.png" alt="mongoDB" width="50px" height="50px" /> | <img src="https://velog.velcdn.com/images/alsdl0629/post/90c4fb59-9cc1-4429-999d-23b414b6cf3c/image.png" alt="redis" width="50px" height="50px" /> | 
-| :-------------------------------------------------------------------------------------------------------------------: | :------------------------------------------------------------------------------------------------------------------------------: | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
-|                                                         MySQL                                                         |                                                               mongoDB                                                                |                                                                                                           Redis                                                                                                   | 
-
-<br />
-
-<div id="4"></div>
 
 ## 💡 주요 기능
 
@@ -121,13 +83,13 @@
 
 <br />
 
-<div id="5"></div>
+<div id="4"></div>
 
 ## 📂 프로젝트 구성도
 
 |                                   아키텍처(Architecture)                                   |
 | :----------------------------------------------------------------------------------------: |
-| <img src="https://github.com/user-attachments/assets/d73a9a8b-9d5f-4158-9a28-0bd8b07fe0bf" alt="아키텍처(Architecture)" width="500px" /> |
+| <img width="1152" alt="스크린샷 2025-01-04 19 30 39" src="https://github.com/user-attachments/assets/d73a9a8b-9d5f-4158-9a28-0bd8b07fe0bf" /> |
 
 |                                      개체-관계 모델(ERD)                                       |
 | :-------------------------------------------------------------------------------------------: |
@@ -136,27 +98,16 @@
 
 <br />
 
-<div id="6"></div>
-
-
-## 데모 영상
-
-<br />
-
-<div id="7"></div>
+<div id="5"></div>
 
 
 ## 📊 구글 애널리틱스 통계
 
-
-
-
-
-
+<img width="1152" alt="스크린샷 2025-01-04 19 34 54" src="https://github.com/user-attachments/assets/1832f088-35ba-43b3-9dcf-a9ed7bbc7c0c" />
 
 <br />
 
-<div id="8"></div>
+<div id="6"></div>
 
 ## 👪 개발 팀 소개
 
@@ -196,7 +147,7 @@
   <tr>
     <td align="center">
       <a href="https://github.com/hellokorea" target="_blank">
-        김정동<br />(Back-end & 팀장)
+        김정동<br />(Back-end &팀장)
       </a>
     </td>
     <td align="center">
@@ -241,7 +192,7 @@
 | 임가인 |     Front-end      | - 로그인 페이지<br />- 회원가입 페이지<br />- 메인 페이지<br />- 관리자 영화 등록 페이지
 <br />
 
-<div id="9"></div>
+<div id="7"></div>
 
 ## 📅 개발 기간
 
@@ -249,10 +200,9 @@
 
 <br />
 
-<div id="10"></div>
+<div id="8"></div>
 
 ## 💻 실행 방법
-
 
   1. AWS EC2 인스턴스 프로비저닝 및 초기 설정
       - 프론트엔드 및 백엔드 서버를 호스팅하기 위해 Amazon Web Services(AWS)에서 Ubuntu 기반 EC2 인스턴스를 생성
@@ -291,3 +241,5 @@
   9. 테스트 및 최종 배포
       - 배포된 프론트엔드와 백엔드의 HTTP/HTTPS 요청이 정상적으로 처리되는지 테스트
       - HTTPS를 통한 보안 트래픽 처리와 도메인 연결을 성공적으로 설정하여 클라이언트와 서버 간 원활한 통신을 보장
+    
+<div id="9"></div>
